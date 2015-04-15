@@ -6,3 +6,4 @@ target
 libs/
 .classpath
 .project
+conf/database.conf
