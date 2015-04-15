@@ -1,7 +1,7 @@
 package controllers;
 
+import managers.AtlasManager;
 import actions.UriLabel;
-
 import play.Configuration;
 import play.Play;
 import play.mvc.Controller;
@@ -20,10 +20,10 @@ public class AtlasController extends Controller
 	 * @param  type The ressource
 	 * @return Http response (json)
 	 */
-	public static Result list(String type) 
+	public static Result info(String type) 
 	{
 		Configuration confLibelle = Play.application().configuration().getConfig("libelle");
-		return ok("Affiche les infos sur les " + confLibelle.getString(type));
+		return ok(AtlasManager.info(confLibelle.getString(type)));
     }
 
 	

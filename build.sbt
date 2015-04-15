@@ -12,3 +12,5 @@ libraryDependencies ++= Seq(
   cache,
   javaWs
 )
+
+libraryDependencies += "org.postgresql" % "postgresql" % "9.2-1004-jdbc4"

@@ -3,6 +3,6 @@
 # ~~~~
 
 # Home page
-GET     /apiv1/:type                controllers.AtlasController.list(type: String)
+GET     /apiv1/:type/info           controllers.AtlasController.info(type: String)
 
 GET	    /apiv1/:type/:id			controllers.AtlasController.show(type: String, id: Long)
