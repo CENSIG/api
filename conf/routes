@@ -3,6 +3,6 @@
 # ~~~~
 
 # Home page
-GET     /                           controllers.Application.index()
+GET     /apiv1/:type                controllers.AtlasController.list(type: String)
 
-GET     /hello                      controllers.Application.hello()
+GET	    /apiv1/:type/:id			controllers.AtlasController.show(type: String, id: Long)
