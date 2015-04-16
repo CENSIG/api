@@ -1,11 +1,15 @@
 package controllers;
 
+import errors.SimpleError;
 import managers.AtlasManager;
 import actions.UriLabel;
 import play.Configuration;
 import play.Play;
+import play.libs.F.Promise;
+import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
+
 
 
 /**
@@ -20,10 +24,10 @@ public class AtlasController extends Controller
 	 * @param  type The ressource
 	 * @return Http response (json)
 	 */
-	public static Result info(String type) 
+	public static Promise<Result> info(String type) 
 	{
 		Configuration confLibelle = Play.application().configuration().getConfig("libelle");
-		return ok(AtlasManager.info(confLibelle.getString(type)));
+		return AtlasManager.info(confLibelle.getString(type));
     }
 
 	
@@ -33,10 +37,10 @@ public class AtlasController extends Controller
 	 * @param  id   The identifiant
 	 * @return Http response (json)
 	 */
-	public static Result show(String type, Long id)
+	public static Promise<Result> show(String type, String id)
 	{
 		Configuration confLibelle = Play.application().configuration().getConfig("libelle");
-		return ok("Affiche les infos sur le " + confLibelle.getString(type) + " dont l'id est " + id);
+		return AtlasManager.show(confLibelle.getString(type), id);
 	}
 
 }

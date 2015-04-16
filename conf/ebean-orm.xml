@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<entity-mappings>
+    <entity class="models.Espece">
+        <raw-sql name="show">
+            <columnMapping column="ref.nom_complet" property="nomComplet" />
+            <columnMapping column="lb_auteur" property="auteur" />
+            <columnMapping column="ref.famille" property="famille" />
+            <columnMapping column="ref.ordre" property="ordre" />
+            <columnMapping column="ref.phylum" property="phylum" />
+            <query>
+            	select ref.nom_complet, lb_auteur, ref.famille, ref.phylum, ref.ordre as ordre, count(*) as oobservations 
+            	from saisie.saisie_observation obs 
+            	inner join inpn.taxref ref 
+            	on obs.cd_nom = ref.cd_nom 
+            	where ref.cd_nom = :id and ref.ordre = :type 
+            	group by ref.cd_nom
+            </query>
+        </raw-sql>
+    </entity>
+</entity-mappings>

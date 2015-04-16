@@ -1,35 +1,43 @@
 package managers;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
 import com.avaje.ebean.Ebean;
-import com.avaje.ebean.SqlRow;
-import com.fasterxml.jackson.databind.JsonNode;
+import com.avaje.ebean.Query;
 
-import models.Type;
-import play.Configuration;
-import play.Logger;
-import play.Play;
-import play.db.DB;
-import play.libs.Json;
+import models.Espece;
+import models.InfoType;
+import play.libs.F.Promise;
+import play.mvc.Result;
 
-public class AtlasManager
-{
-	private static Configuration conf = Play.application().configuration().getConfig("requetes.atlas");
-	
-	public static JsonNode info(String type)
+/**
+ * A manager for atlas
+ * @author Jean BOUDET
+ */
+public class AtlasManager extends Manager
+{	
+	/**
+	 * Get informations about type
+	 * @param 	type The ressouce
+	 * @return	json
+	 */
+	public static Promise<Result> info(String type)
 	{
-		Type res = new Type();
-		SqlRow row = Ebean.createSqlQuery(conf.getString("info"))
-				.setParameter("type", type)
-				.findUnique();
-		
-		res.setObservations(row.getInteger("nbobs"));
-		res.setEspeces(row.getInteger("nbespeces"));
-		return Json.toJson(res);
+		Query<InfoType> query = Ebean.createNamedQuery(InfoType.class, "info")
+				.setParameter("type", type);
+		return createResponse(query.findUnique());
+	}
+	
+	/**
+	 * Show informations on ressouce with a specific id
+	 * @param  type The ressouce
+	 * @param  id   The identifiant
+	 * @return json
+	 */
+	public static Promise<Result> show(String type, String id)
+	{
+		Query<Espece> query = Ebean.createNamedQuery(Espece.class, "show")
+			.setParameter("id", id)
+			.setParameter("type", type);
+		return createResponse(query.findUnique());
 	}
 
 }
