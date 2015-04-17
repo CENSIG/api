@@ -8,9 +8,21 @@ import play.libs.Json;
 import play.mvc.Result;
 import static play.mvc.Results.*;
 
+
+/**
+ * A abstract manager
+ * @author Jean BOUDET
+ */
 public abstract class Manager 
 {
-	public static Promise<Result> createResponse(final Object o)
+	
+	/**
+	 * Create a result promise with error message if error
+	 * @param 	o 		 Feedback object
+	 * @param 	message  Error message if erreur
+	 * @return	result promise
+	 */
+	public static Promise<Result> createResponse(final Object o, final String message)
 	{
 		Promise<Object> promiseObj = Promise.promise(
 			new Function0<Object>() {
@@ -24,7 +36,7 @@ public abstract class Manager
 				public Result apply(Object o) {
 					Result res = null;
 					if (o == null) {
-						res = notFound(Json.toJson(new SimpleError("foo")));
+						res = notFound(Json.toJson(new SimpleError(message)));
 					} else {
 						res = ok(Json.toJson(o));
 					}
@@ -33,4 +45,16 @@ public abstract class Manager
 			}
 		);
 	}
+	
+	
+	/**
+	 * Create a result promise
+	 * @param  o Feedback object
+	 * @return result promise
+	 */
+	public static Promise<Result> createResponse(final Object o)
+	{
+		return createResponse(o, null);
+	}
+	
 }

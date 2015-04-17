@@ -1,12 +1,10 @@
 package controllers;
 
-import errors.SimpleError;
 import managers.AtlasManager;
 import actions.UriLabel;
 import play.Configuration;
 import play.Play;
 import play.libs.F.Promise;
-import play.libs.Json;
 import play.mvc.Controller;
 import play.mvc.Result;
 
@@ -37,7 +35,7 @@ public class AtlasController extends Controller
 	 * @param  id   The identifiant
 	 * @return Http response (json)
 	 */
-	public static Promise<Result> show(String type, String id)
+	public static Promise<Result> show(String type, Long id)
 	{
 		Configuration confLibelle = Play.application().configuration().getConfig("libelle");
 		return AtlasManager.show(confLibelle.getString(type), id);

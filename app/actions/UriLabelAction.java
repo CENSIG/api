@@ -2,10 +2,12 @@ package actions;
 
 import java.util.regex.*;
 
+import errors.SimpleError;
 import play.mvc.Action.Simple;
 import play.mvc.Http;
 import play.mvc.Result;
 import play.libs.F.Promise;
+import play.libs.Json;
 import play.Configuration;
 import play.Play;
 
@@ -28,11 +30,12 @@ public class UriLabelAction extends Simple
 		matcher.find();
 
 		Configuration confLibelle = Play.application().configuration().getConfig(CONF_LIBELLE);
+		String ressource = matcher.group(1);
 
-		if (confLibelle.getString(matcher.group(1)) != null) {
+		if (confLibelle.getString(ressource) != null) {
 			return delegate.call(ctx);
 		}
 		
-		return Promise.pure((Result) notFound("Erreur"));
+		return Promise.pure((Result) notFound(Json.toJson(new SimpleError("La ressouce "+ressource+" n'existe pas"))));
 	} 
 }

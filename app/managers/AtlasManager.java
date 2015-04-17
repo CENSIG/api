@@ -32,12 +32,12 @@ public class AtlasManager extends Manager
 	 * @param  id   The identifiant
 	 * @return json
 	 */
-	public static Promise<Result> show(String type, String id)
+	public static Promise<Result> show(String type, Long id)
 	{
 		Query<Espece> query = Ebean.createNamedQuery(Espece.class, "show")
-			.setParameter("id", id)
+			.setParameter("id", Long.toString(id))
 			.setParameter("type", type);
-		return createResponse(query.findUnique());
+		return createResponse(query.findUnique(), "L'identifiant "+id+" n'existe pas pour cette ressouce");
 	}
 
 }

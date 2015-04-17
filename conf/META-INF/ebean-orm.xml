@@ -25,7 +25,7 @@
     			select count(id_obs) as observations, count(distinct ref.cd_nom) as especes 
     			from saisie.saisie_observation as obs 
     			inner join inpn.taxref as ref 
-    			on obs.cd_nom = ref.cd_nom 
+    			on obs.cd_nom = ref.cd_nom
     			where ref.ordre = :type
     		</query>
     	</raw-sql>

@@ -11,14 +11,14 @@ import com.avaje.ebean.annotation.Sql;
  */
 @Entity
 @Sql
-public class InfoType 
+public class InfoType
 {
 	// Number observations
 	private int observations;
 	
 	// Number especes
 	private int especes;
-
+	
 	/**
 	 * @return Number especes
 	 */
