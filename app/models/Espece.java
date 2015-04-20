@@ -2,130 +2,40 @@ package models;
 
 import javax.persistence.Entity;
 
+import play.db.ebean.Model;
+
 import com.avaje.ebean.annotation.Sql;
 
+/**
+ * A simple model whish represent espece
+ * @author Jean BOUDET
+ */
 @Entity
 @Sql
-public class Espece
+public class Espece extends Model
 {
-	private String id;
+	// Identifiant
+	public String id;
 	
-	private String nomComplet;
+	// Complet name
+	public String nomComplet;
 	
-	private String auteur;
+	// Author
+	public String auteur;
 	
-	private String famille;
+	// Famille
+	public String famille;
 	
-	private String ordre;
+	// Ordre
+	public String ordre;
 	
-	private String phylum;
+	// Phylum
+	public String phylum;
 	
-	private int observations;
+	// Numbers of observations
+	public int observations;
 	
-	public Espece(String id)
-	{
-		super();
-		this.setId(id);
-	}
-	
-	public Espece() {}
-	
-	/**
-	 * @return the id
-	 */
-	public String getId() {
-		return id;
-	}
-
-	/**
-	 * @param id the id to set
-	 */
-	public void setId(String id) {
-		this.id = id;
-	}
-	
-	/**
-	 * @return the nom_complet
-	 */
-	public String getNomComplet() {
-		return nomComplet;
-	}
-
-	/**
-	 * @param nom_complet the nom_complet to set
-	 */
-	public void setNomComplet(String nom_complet) {
-		this.nomComplet = nom_complet;
-	}
-
-	/**
-	 * @return the auteur
-	 */
-	public String getAuteur() {
-		return auteur;
-	}
-
-	/**
-	 * @param auteur the auteur to set
-	 */
-	public void setAuteur(String auteur) {
-		this.auteur = auteur;
-	}
-
-	/**
-	 * @return the famille
-	 */
-	public String getFamille() {
-		return famille;
-	}
-
-	/**
-	 * @param famille the famille to set
-	 */
-	public void setFamille(String famille) {
-		this.famille = famille;
-	}
-
-	/**
-	 * @return the ordre
-	 */
-	public String getOrdre() {
-		return ordre;
-	}
-
-	/**
-	 * @param ordre the ordre to set
-	 */
-	public void setOrdre(String ordre) {
-		this.ordre = ordre;
-	}
-
-	/**
-	 * @return the phylum
-	 */
-	public String getPhylum() {
-		return phylum;
-	}
-
-	/**
-	 * @param phylum the phylum to set
-	 */
-	public void setPhylum(String phylum) {
-		this.phylum = phylum;
-	}
-
-	/**
-	 * @return the observations
-	 */
-	public int getObservations() {
-		return observations;
-	}
-
-	/**
-	 * @param observations the observations to set
-	 */
-	public void setObservations(int observations) {
-		this.observations = observations;
-	}
+	// Geojson property and geometry
+	public String features;
 	
 }

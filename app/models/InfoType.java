@@ -2,8 +2,9 @@ package models;
 
 import javax.persistence.Entity;
 
-import com.avaje.ebean.annotation.Sql;
+import play.db.ebean.Model;
 
+import com.avaje.ebean.annotation.Sql;
 
 /**
  * A simple model whish represent type information
@@ -11,45 +12,23 @@ import com.avaje.ebean.annotation.Sql;
  */
 @Entity
 @Sql
-public class InfoType
+public class InfoType extends Model
 {
+	// Ordre (type)
+	public String ordre;
+	
 	// Number observations
-	private int observations;
+	public int observations;
 	
 	// Number especes
-	private int especes;
+	public int especes;
 	
-	/**
-	 * @return Number especes
-	 */
-	public int getEspeces() 
-	{
-		return especes;
-	}
-
-	/**
-	 * Set number especes
-	 * @param especes New number
-	 */
-	public void setEspeces(int especes) 
-	{
-		this.especes = especes;
-	}
-
-	/**
-	 * @return Number observations
-	 */
-	public int getObservations() 
-	{
-		return observations;
-	}
-
-	/**
-	 * Set number observations
-	 * @param observations New number
-	 */
-	public void setObservations(int observations) 
-	{
-		this.observations = observations;
-	}
+	// Number observateurs
+	public int observateurs;
+	
+	// Number communes
+	public int communes;
+	
+	// Geojson property and geometry
+	public String features;
 }

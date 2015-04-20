@@ -2,31 +2,21 @@
 <entity-mappings>
     <entity class="models.Espece">
         <raw-sql name="show">
-        	<columnMapping column="ref.cd_nom" property="id" />
-            <columnMapping column="ref.nom_complet" property="nomComplet" />
+        	<columnMapping column="cd_nom" property="id" />
+            <columnMapping column="nom_complet" property="nomComplet" />
             <columnMapping column="lb_auteur" property="auteur" />
-            <columnMapping column="ref.famille" property="famille" />
-            <columnMapping column="ref.ordre" property="ordre" />
-            <columnMapping column="ref.phylum" property="phylum" />
+            <columnMapping column="obs_by_grid" property="features" />
             <query>
-            	select ref.cd_nom, ref.nom_complet, lb_auteur, ref.famille, ref.phylum, ref.ordre as ordre, count(*) as observations 
-            	from saisie.saisie_observation obs 
-            	inner join inpn.taxref ref 
-            	on obs.cd_nom = ref.cd_nom 
-            	where ref.cd_nom = :id and ref.ordre = :type 
-            	group by ref.cd_nom
+            	select cd_nom, nom_complet, lb_auteur, famille, phylum, ordre, observations, obs_by_grid from webobs.info_espece where cd_nom = :id
             </query>
         </raw-sql>
     </entity>
     
     <entity class="models.InfoType">
     	<raw-sql name="info">
+    		 <columnMapping column="obs_by_grid" property="features" />
     		<query>
-    			select count(id_obs) as observations, count(distinct ref.cd_nom) as especes 
-    			from saisie.saisie_observation as obs 
-    			inner join inpn.taxref as ref 
-    			on obs.cd_nom = ref.cd_nom
-    			where ref.ordre = :type
+    			select ordre, observations, especes, obs_by_grid, observateurs, communes from webobs.info_ordre where ordre = :type
     		</query>
     	</raw-sql>
     </entity>

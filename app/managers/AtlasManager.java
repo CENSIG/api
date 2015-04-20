@@ -22,7 +22,7 @@ public class AtlasManager extends Manager
 	public static Promise<Result> info(String type)
 	{
 		Query<InfoType> query = Ebean.createNamedQuery(InfoType.class, "info")
-				.setParameter("type", type);
+			.setParameter("type", type);
 		return createResponse(query.findUnique());
 	}
 	
