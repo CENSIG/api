@@ -25,6 +25,10 @@ public class AtlasTest extends WithApplication
 	private static final String URI_PAPILLONS_INF = API + "/papillons/inf";
 	
 	private static final String URI_PAPILLONS_INFO = API + "/papillons/info";
+
+	private static final String URI_PAPILLON_53524 = API + "/papillon/53524";
+
+	private static final String URI_PAPILLONS_1 = API + "/papillons/1";
 			
 	/**
 	 * Fake URI
@@ -66,5 +70,24 @@ public class AtlasTest extends WithApplication
 		assertThat(contentType(result)).isEqualTo("application/json");
 		System.out.println("OK");
 
+	}
+	
+	/**
+	 * Test show action
+	 */
+	@Test
+	public void testShow()
+	{
+		// Not found because expected papillons not papillon
+		System.out.print("GET "+URI_PAPILLON_53524+": ");
+		Result result = route(fakeRequest(GET, URI_PAPILLON_53524));
+		assertThat(status(result)).isEqualTo(NOT_FOUND);
+		System.out.println("N'existe pas");
+		
+		// Not found because papillons with id 1 not exist
+		System.out.print("GET "+URI_PAPILLONS_1+": ");
+		result = route(fakeRequest(GET, URI_PAPILLONS_1));
+		assertThat(status(result)).isEqualTo(NOT_FOUND);
+		System.out.println("N'existe pas");
 	}
 }

@@ -3,8 +3,13 @@ package models;
 import javax.persistence.Entity;
 
 import play.db.ebean.Model;
+import actions.GeomJson;
+import actions.GeomString;
 
 import com.avaje.ebean.annotation.Sql;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * A simple model whish represent type information
@@ -12,6 +17,7 @@ import com.avaje.ebean.annotation.Sql;
  */
 @Entity
 @Sql
+@JsonInclude(Include.NON_NULL)
 public class InfoType extends Model
 {
 	// Ordre (type)
@@ -30,5 +36,9 @@ public class InfoType extends Model
 	public int communes;
 	
 	// Geojson property and geometry
-	public String features;
+	@GeomString
+	public String geojsonString;
+	
+	@GeomJson
+	public JsonNode geojson;
 }

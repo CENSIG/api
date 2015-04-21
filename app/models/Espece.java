@@ -3,8 +3,13 @@ package models;
 import javax.persistence.Entity;
 
 import play.db.ebean.Model;
+import actions.GeomJson;
+import actions.GeomString;
 
 import com.avaje.ebean.annotation.Sql;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.JsonNode;
 
 /**
  * A simple model whish represent espece
@@ -12,6 +17,7 @@ import com.avaje.ebean.annotation.Sql;
  */
 @Entity
 @Sql
+@JsonInclude(Include.NON_NULL)
 public class Espece extends Model
 {
 	// Identifiant
@@ -35,7 +41,11 @@ public class Espece extends Model
 	// Numbers of observations
 	public int observations;
 	
+	@GeomString
 	// Geojson property and geometry
-	public String features;
+	public String geojsonString;
+	
+	@GeomJson
+	public JsonNode geojson;
 	
 }

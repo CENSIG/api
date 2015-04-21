@@ -5,18 +5,18 @@
         	<columnMapping column="cd_nom" property="id" />
             <columnMapping column="nom_complet" property="nomComplet" />
             <columnMapping column="lb_auteur" property="auteur" />
-            <columnMapping column="obs_by_grid" property="features" />
+            <columnMapping column="geojson" property="geojsonString" />
             <query>
-            	select cd_nom, nom_complet, lb_auteur, famille, phylum, ordre, observations, obs_by_grid from webobs.info_espece where cd_nom = :id
+            	select cd_nom, nom_complet, lb_auteur, famille, phylum, ordre, observations, geojson from webobs.info_espece where cd_nom = :id
             </query>
         </raw-sql>
     </entity>
     
     <entity class="models.InfoType">
     	<raw-sql name="info">
-    		 <columnMapping column="obs_by_grid" property="features" />
+    		 <columnMapping column="geojson" property="geojsonString" />
     		<query>
-    			select ordre, observations, especes, obs_by_grid, observateurs, communes from webobs.info_ordre where ordre = :type
+    			select ordre, observations, especes, geojson, observateurs, communes from webobs.info_ordre where ordre = :type
     		</query>
     	</raw-sql>
     </entity>
