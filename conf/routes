@@ -4,6 +4,8 @@
 
 # Home page
 
-GET 	/apiv1/geojson/:id			controllers.GeoJsonController.show(id: Long)
+GET 	/apiv1/taxon/:id/geojson		controllers.TaxonController.showGeoJson(id: Long)
 
-GET		/apiv1/informations/:id		controllers.InformationsController.show(id: Long)
+GET 	/apiv1/taxon/:id/informations	controllers.TaxonController.showInformations(id: Long)
+
+
