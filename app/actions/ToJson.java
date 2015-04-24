@@ -11,4 +11,4 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 @Inherited
 @Documented
-public @interface GeomJson {}
+public @interface ToJson {}

@@ -12,7 +12,7 @@ import play.libs.Json;
  * @author Jean BOUDET
  *
  */
-public final class GeomParse 
+public final class JsonParse 
 {
 	
 	/**
@@ -21,7 +21,7 @@ public final class GeomParse
 	 * @param a An object
 	 * @return The modified object
 	 */
-	public static <T> T parseGeom(T a)
+	public static <T> T parse(T a)
 	{
 		if (a == null) {
 			return a;
@@ -33,8 +33,8 @@ public final class GeomParse
 		Field geomJsonField = null;
 		
 		for (Field field : cls.getDeclaredFields()) {
-			Annotation geomStringAnnotation = field.getAnnotation(actions.GeomString.class);
-			Annotation geomJsonAnnotation   = field.getAnnotation(actions.GeomJson.class);
+			Annotation geomStringAnnotation = field.getAnnotation(actions.StringJson.class);
+			Annotation geomJsonAnnotation   = field.getAnnotation(actions.ToJson.class);
 			
 			if (geomStringAnnotation != null) {
 				geomStringField = field;

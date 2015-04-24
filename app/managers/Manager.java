@@ -1,6 +1,10 @@
 package managers;
 
+import java.util.Set;
+
 import errors.SimpleError;
+import play.data.validation.Constraints.Validator;
+import play.data.validation.Validation;
 import play.libs.F.Function;
 import play.libs.F.Function0;
 import play.libs.F.Promise;
@@ -22,7 +26,7 @@ public abstract class Manager
 	 * @param 	message  Error message if erreur
 	 * @return	result promise
 	 */
-	public static Promise<Result> createResponse(final Object o, final String message)
+	protected static Promise<Result> createResponse(final Object o, final String message)
 	{
 		Promise<Object> promiseObj = Promise.promise(
 			new Function0<Object>() {
@@ -52,9 +56,15 @@ public abstract class Manager
 	 * @param  o Feedback object
 	 * @return result promise
 	 */
-	public static Promise<Result> createResponse(final Object o)
+	protected static Promise<Result> createResponse(final Object o)
 	{
 		return createResponse(o, null);
+	}
+	
+	protected static boolean isValid(Object o)
+	{
+		Set errors = Validation.getValidator().validate(o);
+		return errors.isEmpty();
 	}
 	
 }
