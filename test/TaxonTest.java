@@ -26,6 +26,10 @@ public class TaxonTest extends WithApplication
 	
 	private static final String URI_TAXON_2018_GEOJSON = API + "/taxon/2018/geojson";
 	
+	private static final String URI_TAXON_1_INFO = API + "/taxon/1/informations";
+	
+	private static final String URI_TAXON_2018_INFO = API + "/taxon/2018/informations";
+	
 	@Test
 	public void testShowGeoJson()
 	{
@@ -61,5 +65,23 @@ public class TaxonTest extends WithApplication
 		assertThat(json.has("type")).isTrue();
 		assertThat(json.get("type").asText()).isEqualTo("FeatureCollection");
 		assertThat(json.has("features")).isTrue();
+	}
+	
+	@Test
+	public void testShowInformations()
+	{
+		System.out.print("GET "+URI_TAXON_1_INFO+": ");
+		Result result = route(fakeRequest(GET, URI_TAXON_1_INFO));
+		assertThat(status(result)).isEqualTo(NOT_FOUND);
+		System.out.println("La ressource n'existe pas");
+		
+		System.out.print("GET "+URI_TAXON_2018_INFO+": ");
+		result = route(fakeRequest(GET, URI_TAXON_2018_INFO));
+		assertThat(status(result)).isEqualTo(OK);
+		System.out.println("La ressource existe");
+		
+		System.out.print("GET "+URI_TAXON_2018_INFO+": ");
+		assertThat(contentType(result)).isEqualTo("application/json");
+		System.out.println("C'est du json");
 	}
 }

@@ -100,4 +100,23 @@
  			</query>
     	</raw-sql>
     </entity>
+    <entity class="models.GridModel">
+    	<raw-sql name="show">
+    		<columnMapping column="geometries" property="geometriesList" />
+    		<query>
+    			select geometries
+    			from (
+    				WITH json as (
+    					select cast(st_asgeojson(st_transform(g.geometrie, 4326)) as json) as geometries
+						from export.grille_10km g
+						join ign_geofla.commune c
+						on st_intersects(c.geometrie, g.geometrie)
+						where code_reg = '91'
+						group by g.geometrie
+					)
+					select geometries from json
+				) as json	
+    		</query>
+    	</raw-sql>
+    </entity>
 </entity-mappings>
