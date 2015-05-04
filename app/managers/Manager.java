@@ -13,6 +13,7 @@ import play.mvc.Result;
 import static play.mvc.Results.*;
 
 
+
 /**
  * A abstract manager
  * @author Jean BOUDET
