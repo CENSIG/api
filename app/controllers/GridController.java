@@ -1,9 +1,11 @@
 package controllers;
 
+import actions.CorsAction;
 import managers.GridManager;
 import play.libs.F.Promise;
 import play.mvc.Controller;
 import play.mvc.Result;
+import play.mvc.With;
 
 /**
  * 
@@ -11,6 +13,7 @@ import play.mvc.Result;
  * @author Jean BOUDET
  *
  */
+@With(CorsAction.class)
 public class GridController extends Controller 
 {
 	/**
