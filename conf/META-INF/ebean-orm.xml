@@ -11,32 +11,39 @@
 						SELECT cd_taxsup, cd_nom, lb_nom, rang
 						FROM inpn.taxref_v8
 						where cd_nom = :id
-	
+
 						UNION
-	
+
 						SELECT inpn.taxref_v8.cd_taxsup, inpn.taxref_v8.cd_nom, inpn.taxref_v8.lb_nom , inpn.taxref_v8.rang
 						FROM inpn.taxref_v8 
 						JOIN ancetres a
 						ON inpn.taxref_v8.cd_taxsup = a.cd_nom
-	
+
 					), data as (
 
-						SELECT cd_nom
+						SELECT cd_nom, obs.geometrie, id_obs
 						FROM ancetres a
 						JOIN saisie.saisie_observation obs
 						using (cd_nom)
-						group by cd_nom
-	
+						group by cd_nom, obs.geometrie, id_obs
+
+					), grid as (
+
+						select g.geometrie
+						from export.grille_10km g
+						join ign_geofla.commune c
+						on st_intersects(c.geometrie, g.geometrie)
+						where code_reg = '91'
+						group by g.geometrie
+
 					), feature as (
 
 						SELECT 'Feature' AS type
 						, row_to_json((SELECT ct FROM (SELECT count(id_obs) AS nombres) AS ct)) AS properties
 						, cast(ST_AsGeoJson(st_transform(g.geometrie, 4326)) as json) AS geometry
-						FROM saisie.saisie_observation o
-						JOIN export.grille_10km g
-						ON st_intersects(o.geometrie, g.geometrie)
-						JOIN data
-						using (cd_nom)
+						FROM grid g
+						left JOIN data obs
+						ON st_intersects(obs.geometrie, g.geometrie)
 						group by g.geometrie
 					)
 
@@ -98,25 +105,6 @@
  				from data JOIN info ON info.cd_nom = aïeul
  				) as info
  			</query>
-    	</raw-sql>
-    </entity>
-    <entity class="models.GridModel">
-    	<raw-sql name="show">
-    		<columnMapping column="geometries" property="geometriesList" />
-    		<query>
-    			select geometries
-    			from (
-    				WITH json as (
-    					select cast(st_asgeojson(st_transform(g.geometrie, 4326)) as json) as geometries
-						from export.grille_10km g
-						join ign_geofla.commune c
-						on st_intersects(c.geometrie, g.geometrie)
-						where code_reg = '91'
-						group by g.geometrie
-					)
-					select geometries from json
-				) as json	
-    		</query>
     	</raw-sql>
     </entity>
 </entity-mappings>
