@@ -1,8 +1,12 @@
 package managers;
 
 import static utils.JsonParse.parse;
+
+import java.util.List;
+
 import models.GeoJsonModel;
 import models.InformationsModel;
+import models.ParentsModel;
 import play.libs.F.Promise;
 import play.mvc.Result;
 
@@ -21,9 +25,7 @@ public class TaxonManager extends Manager
 				.setParameter("id", Long.toString(id))
 				.findUnique();
 		
-		res = (isValid(res)) ? parse(res) : null;
-		
-		return createResponse(res, "L'identifiant "+id+" n'existe pas pour cette ressouce");
+		return createResponse(parse(res), "L'identifiant "+id+" n'existe pas pour cette ressouce");
 	}
 	
 	/**
@@ -37,6 +39,22 @@ public class TaxonManager extends Manager
 				.setParameter("id", Long.toString(id))
 				.findUnique();
 		
-		return createResponse(parse(res), "L'identifiant "+id+" n'existe pas pour cette ressouce");
+		return createResponse(parse(res), "L'identifiant "+id+" n'existe pas pour cette ressource");
+	}
+	
+	/**
+	 * Get the response (parents)
+	 * @param 	id The identifiant
+	 * @return	Json response
+	 */
+	public static Promise<Result> showParents(Long id)
+	{
+		List<ParentsModel> res = Ebean.createNamedQuery(ParentsModel.class, "show")
+				.setParameter("id", Long.toString(id))
+				.findList();
+		
+		res = (isValid(res)) ? res : null;
+		
+		return createResponse(res, "L'identifiant "+id+" n'existe pas pour cette ressource");
 	}
 }

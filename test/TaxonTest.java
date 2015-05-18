@@ -30,31 +30,25 @@ public class TaxonTest extends WithApplication
 	
 	private static final String URI_TAXON_2018_INFO = API + "/taxon/2018/informations";
 	
+	private static final String URI_TAXON_1_PARENTS = API + "/taxon/1/parents";
+	
+	private static final String URI_TAXON_2018_PARENTS = API + "/taxon/2018/parents";
+	
 	@Test
 	public void testShowGeoJson()
 	{
-		System.out.print("GET "+URI_TAXON+": ");
 		Result result = route(fakeRequest(GET, URI_TAXON));
 		assertThat(result).isNull();
-		System.out.println("N'existe pas");
 		
-		System.out.print("GET "+URI_TAXON_1_GEOJSON+": ");
 		result = route(fakeRequest(GET, URI_TAXON_1_GEOJSON));
-		assertThat(status(result)).isEqualTo(NOT_FOUND);
-		System.out.println("La ressource n'existe pas");
+		assertThat(status(result)).isEqualTo(OK);
 		
-		System.out.print("GET "+URI_TAXON_1_GEOJSON+": ");
 		assertThat(contentType(result)).isEqualTo("application/json");
-		System.out.println("C'est quand même du json");
 		
-		System.out.print("GET "+URI_TAXON_2018_GEOJSON+": ");
 		result = route(fakeRequest(GET, URI_TAXON_2018_GEOJSON));
 		assertThat(status(result)).isEqualTo(OK);
-		System.out.println("La ressource existe");
 		
-		System.out.print("GET "+URI_TAXON_2018_GEOJSON+": ");
 		assertThat(contentType(result)).isEqualTo("application/json");
-		System.out.println("C'est du json");
 	}
 	
 	@Test
@@ -70,18 +64,28 @@ public class TaxonTest extends WithApplication
 	@Test
 	public void testShowInformations()
 	{
-		System.out.print("GET "+URI_TAXON_1_INFO+": ");
 		Result result = route(fakeRequest(GET, URI_TAXON_1_INFO));
 		assertThat(status(result)).isEqualTo(NOT_FOUND);
-		System.out.println("La ressource n'existe pas");
 		
-		System.out.print("GET "+URI_TAXON_2018_INFO+": ");
 		result = route(fakeRequest(GET, URI_TAXON_2018_INFO));
 		assertThat(status(result)).isEqualTo(OK);
-		System.out.println("La ressource existe");
 		
-		System.out.print("GET "+URI_TAXON_2018_INFO+": ");
 		assertThat(contentType(result)).isEqualTo("application/json");
-		System.out.println("C'est du json");
+	}
+	
+	@Test
+	public void testShowParents()
+	{
+		Result result = route(fakeRequest(GET, URI_TAXON_1_PARENTS));
+		assertThat(status(result)).isEqualTo(NOT_FOUND);
+		
+		result = route(fakeRequest(GET, URI_TAXON_2018_PARENTS));
+		assertThat(status(result)).isEqualTo(OK);
+		
+		assertThat(contentType(result)).isEqualTo("application/json");
+		
+		JsonNode json = Json.parse(contentAsString(result));
+		assertThat(json.isArray()).isTrue();
+		assertThat(json.get(0).has("cdnom")).isTrue();
 	}
 }

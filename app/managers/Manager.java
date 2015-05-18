@@ -1,9 +1,9 @@
 package managers;
 
+import java.util.List;
 import java.util.Set;
 
 import errors.SimpleError;
-import play.data.validation.Constraints.Validator;
 import play.data.validation.Validation;
 import play.libs.F.Function;
 import play.libs.F.Function0;
@@ -62,10 +62,25 @@ public abstract class Manager
 		return createResponse(o, null);
 	}
 	
+	/**
+	 * Return true if the object is ok
+	 * @param 	o	object to validate
+	 * @return	boolean
+	 */
 	protected static boolean isValid(Object o)
 	{
 		Set errors = Validation.getValidator().validate(o);
 		return errors.isEmpty();
+	}
+	
+	/**
+	 * Return true if the list is not empty
+	 * @param  l list to validate
+	 * @return boolean
+	 */
+	protected static boolean isValid(List l)
+	{
+		return !l.isEmpty();
 	}
 	
 }

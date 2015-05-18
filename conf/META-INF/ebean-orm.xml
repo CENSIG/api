@@ -107,4 +107,30 @@
  			</query>
     	</raw-sql>
     </entity>
+    <entity class="models.ParentsModel">
+    	<raw-sql name="show">
+    		<columnMapping column="cd_nom" property="cdnom" />
+    		<columnMapping column="lb_nom" property="name" />
+    		<query>
+    			SELECT cd_nom, lb_nom
+				FROM (
+					WITH RECURSIVE parents as  (
+
+						SELECT cd_taxsup, cd_nom, lb_nom, cast(0 as bigint) as rang
+						FROM inpn.taxref_v8
+						where cd_nom = :id
+
+						UNION
+
+						SELECT inpn.taxref_v8.cd_taxsup, inpn.taxref_v8.cd_nom, inpn.taxref_v8.lb_nom, a.rang + 1
+						FROM inpn.taxref_v8 
+						JOIN parents a
+						ON inpn.taxref_v8.cd_nom = a.cd_taxsup
+					)
+
+					select cd_nom, lb_nom from parents order by rang desc
+				) as parents
+    		</query>
+    	</raw-sql>
+    </entity>
 </entity-mappings>

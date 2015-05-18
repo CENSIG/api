@@ -35,4 +35,14 @@ public class TaxonController extends Controller
 	{
 		return TaxonManager.showInformations(id);
 	}
+	
+	/**
+	 * Show parents for a specific taxon
+	 * @param  id
+	 * @return The parents
+	 */
+	public static Promise<Result> showParents(Long id)
+	{
+		return TaxonManager.showParents(id);
+	}
 }
