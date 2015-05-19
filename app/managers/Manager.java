@@ -3,6 +3,8 @@ package managers;
 import java.util.List;
 import java.util.Set;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 import errors.SimpleError;
 import play.data.validation.Validation;
 import play.libs.F.Function;
@@ -29,21 +31,27 @@ public abstract class Manager
 	 */
 	protected static Promise<Result> createResponse(final Object o, final String message)
 	{
-		Promise<Object> promiseObj = Promise.promise(
-			new Function0<Object>() {
-				public Object apply() {
-					return o;
+		Promise<JsonNode> promiseObj = Promise.promise(
+			new Function0<JsonNode>() {
+				public JsonNode apply() {
+					Object objectToJson = o;
+					
+					if (o == null) {
+						objectToJson = new SimpleError(message);
+					}
+					
+					return Json.toJson(objectToJson);
 				}
 			}
 		);
 		return promiseObj.map(
-			new Function<Object, Result>() {
-				public Result apply(Object o) {
+			new Function<JsonNode, Result>() {
+				public Result apply(JsonNode json) {
 					Result res = null;
-					if (o == null) {
-						res = notFound(Json.toJson(new SimpleError(message)));
+					if (json.has("error")) {
+						res = notFound(json);
 					} else {
-						res = ok(Json.toJson(o));
+						res = ok(json);
 					}
 					return res;
 				}

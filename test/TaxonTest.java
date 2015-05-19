@@ -34,6 +34,12 @@ public class TaxonTest extends WithApplication
 	
 	private static final String URI_TAXON_2018_PARENTS = API + "/taxon/2018/parents";
 	
+	private static final String URI_TAXON_185214_CHILDS = API + "/taxon/185214/childs";
+	
+	private static final String URI_TAXON_185214_CHILDS_2 = API + "/taxon/185214/childs?q=2";
+	
+	private static final String URI_TAXON_185214_CHILDS_MACU = API + "/taxon/185214/childs?q=macu";
+	
 	@Test
 	public void testShowGeoJson()
 	{
@@ -84,8 +90,42 @@ public class TaxonTest extends WithApplication
 		
 		assertThat(contentType(result)).isEqualTo("application/json");
 		
+	}
+	
+	@Test
+	public void testShowParentsContent()
+	{
+		Result result = route(fakeRequest(GET, URI_TAXON_2018_PARENTS));
 		JsonNode json = Json.parse(contentAsString(result));
 		assertThat(json.isArray()).isTrue();
 		assertThat(json.get(0).has("cdnom")).isTrue();
+	}
+	
+	@Test
+	public void testShowChilds()
+	{
+		Result result = route(fakeRequest(GET, URI_TAXON_185214_CHILDS));
+		assertThat(status(result)).isEqualTo(422);
+		
+		result = route(fakeRequest(GET, URI_TAXON_185214_CHILDS_2));
+		assertThat(status(result)).isEqualTo(422);
+		
+		result = route(fakeRequest(GET, URI_TAXON_185214_CHILDS_MACU));
+		assertThat(status(result)).isEqualTo(OK);
+		assertThat(contentType(result)).isEqualTo("application/json");
+	}
+	
+	@Test
+	public void testShowChildsContent()
+	{
+		Result result = route(fakeRequest(GET, URI_TAXON_185214_CHILDS_MACU));
+		JsonNode json = Json.parse(contentAsString(result));
+		assertThat(json.isArray()).isTrue();
+		JsonNode first = json.get(0);
+		assertThat(first.has("cdnom")).isTrue();
+		assertThat(first.has("name")).isTrue();
+		assertThat(first.has("isref")).isTrue();
+		assertThat(first.has("observations")).isTrue();
+		assertThat(first.has("troll")).isFalse();
 	}
 }

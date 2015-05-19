@@ -4,12 +4,15 @@ import javax.persistence.Entity;
 
 import com.avaje.ebean.annotation.Sql;
 
+/**
+ * 
+ * Simple model which represent parent for a taxon
+ * @author jean
+ *
+ */
 @Entity
 @Sql
-public class ParentsModel 
+public class ParentsModel extends TaxonsModel 
 {
 
-	public String cdnom;
-	
-	public String name;
 }

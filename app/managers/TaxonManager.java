@@ -4,9 +4,11 @@ import static utils.JsonParse.parse;
 
 import java.util.List;
 
+import models.ChildsModel;
 import models.GeoJsonModel;
 import models.InformationsModel;
 import models.ParentsModel;
+import models.TaxonsModel;
 import play.libs.F.Promise;
 import play.mvc.Result;
 
@@ -45,7 +47,7 @@ public class TaxonManager extends Manager
 	/**
 	 * Get the response (parents)
 	 * @param 	id The identifiant
-	 * @return	Json response
+	 * @return	Json response (json array of parents)
 	 */
 	public static Promise<Result> showParents(Long id)
 	{
@@ -56,5 +58,23 @@ public class TaxonManager extends Manager
 		res = (isValid(res)) ? res : null;
 		
 		return createResponse(res, "L'identifiant "+id+" n'existe pas pour cette ressource");
+	}
+	
+	/**
+	 * Get the response (childs)
+	 * @param id the identifiant
+	 * @param search filter for child name
+	 * @return Json response (json array of childs)
+	 */
+	public static Promise<Result> showChilds(Long id, String search)
+	{
+		List<ChildsModel> res = Ebean.createNamedQuery(ChildsModel.class, "show")
+				.setParameter("id", Long.toString(id))
+				.setParameter("q", "%"+search+"%")
+				.findList();
+		
+		res = (isValid(res)) ? res : null;
+		
+		return createResponse(res, "Aucun taxon trouvé pour la ressource "+id+" et le filtre "+search);
 	}
 }

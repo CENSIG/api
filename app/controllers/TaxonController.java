@@ -1,6 +1,9 @@
 package controllers;
 
 import actions.CorsAction;
+import actions.RequiredParam;
+import actions.RequiredParamAnnotation;
+import actions.StringParamAnnotation;
 import managers.TaxonManager;
 import play.libs.F.Promise;
 import play.mvc.Controller;
@@ -44,5 +47,18 @@ public class TaxonController extends Controller
 	public static Promise<Result> showParents(Long id)
 	{
 		return TaxonManager.showParents(id);
+	}
+	
+	/**
+	 * Show childs for a specific taxon
+	 * @param id
+	 * @param q filter for child name
+	 * @return the childs
+	 */
+	@RequiredParamAnnotation("q")
+	@StringParamAnnotation("q")
+	public static Promise<Result> showChilds(Long id, String q)
+	{
+		return TaxonManager.showChilds(id, q);
 	}
 }

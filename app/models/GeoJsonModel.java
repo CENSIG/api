@@ -14,6 +14,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import play.db.ebean.Model;
 import play.data.validation.Constraints;
 
+/**
+ * 
+ * A model which represent a geojson
+ * @author Jean BOUDET
+ *
+ */
 @Entity
 @Sql
 @JsonInclude(Include.NON_NULL)

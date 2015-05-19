@@ -133,4 +133,38 @@
     		</query>
     	</raw-sql>
     </entity>
+    <entity class="models.ChildsModel">
+    	<raw-sql name="show">
+    		<columnMapping column="cd_nom" property="cdnom" />
+    		<columnMapping column="lb_nom" property="name" />
+    		<columnMapping column="cd_ref" property="cdref" />
+    		<columnMapping column="nom_valide" property="nameRef" />
+    		<query>
+    			SELECT cd_nom, isref, lb_nom, observations, cd_ref, nom_valide
+				FROM (
+					WITH RECURSIVE ancetres as  (
+
+						SELECT cd_taxsup, cd_ref, cd_nom, lb_nom, rang, nom_valide
+						FROM inpn.taxref_v8
+						where cd_nom = :id
+
+						UNION
+
+						SELECT inpn.taxref_v8.cd_taxsup, inpn.taxref_v8.cd_ref, inpn.taxref_v8.cd_nom, inpn.taxref_v8.lb_nom , inpn.taxref_v8.rang, inpn.taxref_v8.nom_valide
+						FROM inpn.taxref_v8 
+						JOIN ancetres a
+						ON inpn.taxref_v8.cd_taxsup = a.cd_nom
+					)
+
+					select a.cd_nom, a.cd_ref=a.cd_nom as isref, a.lb_nom, count(id_obs) as observations, a.cd_ref, a.nom_valide
+					from ancetres a
+					left join saisie.saisie_observation o
+					using (cd_nom)
+					where lower(lb_nom) like lower(:q) or lower(nom_valide) like lower(:q)
+					group by a.cd_nom, a.cd_ref, a.lb_nom, a.nom_valide
+					order by observations desc
+				) as childs
+    		</query>
+    	</raw-sql>
+    </entity>
 </entity-mappings>

@@ -13,6 +13,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import play.db.ebean.Model;
 
+/**
+ * 
+ * A model which aggregate informations on a taxon
+ * @author Jean BOUDET
+ *
+ */
 @Entity
 @Sql
 public class InformationsModel extends Model 

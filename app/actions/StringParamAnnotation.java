@@ -7,14 +7,20 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import play.mvc.With;
+
 /**
  * 
- * Annotation which indicate the field to convert in json
+ * Annotation which use StringParam action
  * @author Jean BOUDET
  *
  */
+@With(StringParam.class)
 @Retention(RetentionPolicy.RUNTIME)
-@Target(ElementType.FIELD)
+@Target(ElementType.METHOD)
 @Inherited
 @Documented
-public @interface ToJson {}
+public @interface StringParamAnnotation 
+{
+	String value();
+}
