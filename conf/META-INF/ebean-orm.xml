@@ -62,7 +62,7 @@
     		<columnMapping column="nom_vern" property="nomVern" />
     		<columnMapping column="synonimes" property="synonimesString" />
     		<query>
-    			SELECT cd_nom, cd_taxsup, nom_vern, lb_nom, rang, ordre, phylum, classe, famille, observations, especes, communes, synonimes
+    			SELECT cd_nom, cd_taxsup, nom_vern, lb_nom, rang, ordre, phylum, classe, famille, observations, especes, communes, observateurs, synonimes
 				FROM (
 					WITH RECURSIVE fils as  (
 	
@@ -85,7 +85,8 @@
 
 				), data as (
 
-     				SELECT count(id_obs) as observations, count(distinct cd_nom) as especes, count(distinct code_insee) as communes, aïeul
+     				SELECT count(id_obs) as observations, count(distinct cd_nom) as especes, count(distinct code_insee) as communes, 
+     					   count(distinct observateur) as observateurs, aïeul
      				from fils f join saisie.saisie_observation using(cd_nom)
      				GROUP BY aïeul
 
@@ -101,7 +102,7 @@
      				where ref.cd_nom = :id
      				GROUP BY ref.cd_taxsup, ref.cd_nom, ref.lb_nom, ref.rang, ref.ordre, ref.phylum, ref.classe, ref.famille, ref.nom_vern
  				)
- 				select cd_nom, cd_taxsup, nom_vern, lb_nom, rang, ordre, phylum, classe, famille, observations, especes, communes, synonimes 
+ 				select cd_nom, cd_taxsup, nom_vern, lb_nom, rang, ordre, phylum, classe, famille, observations, especes, communes, observateurs, synonimes 
  				from data JOIN info ON info.cd_nom = aïeul
  				) as info
  			</query>
@@ -162,7 +163,7 @@
 					using (cd_nom)
 					where lower(lb_nom) like lower(:q) or lower(nom_valide) like lower(:q)
 					group by a.cd_nom, a.cd_ref, a.lb_nom, a.nom_valide
-					order by observations desc
+					order by isref desc, lb_nom asc
 				) as childs
     		</query>
     	</raw-sql>

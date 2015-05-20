@@ -49,6 +49,9 @@ public class InformationsModel extends Model
 	// Number especes
 	public int especes;
 	
+	// Number observateur
+	public int observateurs;
+	
 	public int communes;
 	
 	@JsonInclude(Include.NON_NULL)
