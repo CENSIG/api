@@ -9,6 +9,8 @@ import models.GeoJsonModel;
 import models.InformationsModel;
 import models.ParentsModel;
 import models.TaxonsModel;
+import play.Configuration;
+import play.Play;
 import play.libs.F.Promise;
 import play.mvc.Result;
 
@@ -49,10 +51,13 @@ public class TaxonManager extends Manager
 	 * @param 	id The identifiant
 	 * @return	Json response (json array of parents)
 	 */
-	public static Promise<Result> showParents(Long id)
+	public static Promise<Result> showParents(Long id, String limit)
 	{
+		String filter = Play.application().configuration().getConfig("parents").getString(limit);
+		
 		List<ParentsModel> res = Ebean.createNamedQuery(ParentsModel.class, "show")
 				.setParameter("id", Long.toString(id))
+				.setParameter("limit", filter)
 				.findList();
 		
 		res = (isValid(res)) ? res : null;

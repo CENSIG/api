@@ -1,6 +1,7 @@
 package actions;
 
 import errors.SimpleError;
+import play.Logger;
 import play.libs.Json;
 import play.libs.F.Promise;
 import play.mvc.Action;
@@ -19,15 +20,15 @@ public class StringParam extends Action<StringParamAnnotation>
 	public Promise<Result> call(Context ctx) throws Throwable {
 		String param  		 = configuration.value();
 		String search 		 = ctx.request().getQueryString(param);
-		Promise<Result> res  = null;
+		Promise<Result> res  = delegate.call(ctx);
+		
+		if (search == null) return res;
 		
 		if (isInteger(search)) {
 			res = Promise.pure((Result) status(
 					422, 
 					Json.toJson(new SimpleError("Le paramêtre "+param+" doit contenir une chaîne de caractère"))
 			));
-		} else {
-			res = delegate.call(ctx);
 		}
 		
 		return res;

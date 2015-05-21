@@ -14,5 +14,5 @@ import com.avaje.ebean.annotation.Sql;
 @Sql
 public class ParentsModel extends TaxonsModel 
 {
-
+	public String rang;
 }

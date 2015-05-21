@@ -34,6 +34,10 @@ public class TaxonTest extends WithApplication
 	
 	private static final String URI_TAXON_2018_PARENTS = API + "/taxon/2018/parents";
 	
+	private static final String URI_TAXON_2018_PARENTS_OR = API + "/taxon/2018/parents?limit=OR";
+	
+	private static final String URI_TAXON_2018_PARENTS_2 = API + "/taxon/2018/parents?limit=2";
+	
 	private static final String URI_TAXON_185214_CHILDS = API + "/taxon/185214/childs";
 	
 	private static final String URI_TAXON_185214_CHILDS_2 = API + "/taxon/185214/childs?q=2";
@@ -90,6 +94,12 @@ public class TaxonTest extends WithApplication
 		
 		assertThat(contentType(result)).isEqualTo("application/json");
 		
+		result = route(fakeRequest(GET, URI_TAXON_2018_PARENTS_2));
+		assertThat(status(result)).isEqualTo(422);
+		
+		result = route(fakeRequest(GET, URI_TAXON_2018_PARENTS_OR));
+		assertThat(status(result)).isEqualTo(OK);
+		
 	}
 	
 	@Test
@@ -99,6 +109,11 @@ public class TaxonTest extends WithApplication
 		JsonNode json = Json.parse(contentAsString(result));
 		assertThat(json.isArray()).isTrue();
 		assertThat(json.get(0).has("cdnom")).isTrue();
+		
+		result = route(fakeRequest(GET, URI_TAXON_2018_PARENTS_OR));
+		json = Json.parse(contentAsString(result));
+		assertThat(json.isArray()).isTrue();
+		assertThat(json.get(0).get("rang").asText()).isEqualTo("OR");
 	}
 	
 	@Test

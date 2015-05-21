@@ -1,7 +1,6 @@
 package controllers;
 
 import actions.CorsAction;
-import actions.RequiredParam;
 import actions.RequiredParamAnnotation;
 import actions.StringParamAnnotation;
 import managers.TaxonManager;
@@ -42,11 +41,13 @@ public class TaxonController extends Controller
 	/**
 	 * Show parents for a specific taxon
 	 * @param  id
+	 * @param  limit limit for display hierarchie (default KD)
 	 * @return The parents
 	 */
-	public static Promise<Result> showParents(Long id)
+	@StringParamAnnotation("limit")
+	public static Promise<Result> showParents(Long id, String limit)
 	{
-		return TaxonManager.showParents(id);
+		return TaxonManager.showParents(id, limit);
 	}
 	
 	/**

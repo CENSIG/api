@@ -113,23 +113,24 @@
     		<columnMapping column="cd_nom" property="cdnom" />
     		<columnMapping column="lb_nom" property="name" />
     		<query>
-    			SELECT cd_nom, lb_nom
+    			SELECT cd_nom, lb_nom, rang
 				FROM (
 					WITH RECURSIVE parents as  (
 
-						SELECT cd_taxsup, cd_nom, lb_nom, cast(0 as bigint) as rang
+						SELECT cd_taxsup, cd_nom, lb_nom, rang, cast(0 as bigint) as ordre
 						FROM inpn.taxref_v8
 						where cd_nom = :id
 
 						UNION
 
-						SELECT inpn.taxref_v8.cd_taxsup, inpn.taxref_v8.cd_nom, inpn.taxref_v8.lb_nom, a.rang + 1
-						FROM inpn.taxref_v8 
+						SELECT i.cd_taxsup, i.cd_nom, i.lb_nom, i.rang, a.ordre + 1
+						FROM inpn.taxref_v8 i
 						JOIN parents a
-						ON inpn.taxref_v8.cd_nom = a.cd_taxsup
+						ON i.cd_nom = a.cd_taxsup
+						WHERE i.rang != :limit
 					)
 
-					select cd_nom, lb_nom from parents order by rang desc
+					select cd_nom, lb_nom, rang from parents order by ordre desc
 				) as parents
     		</query>
     	</raw-sql>
