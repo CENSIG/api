@@ -43,7 +43,7 @@ public class TaxonManager extends Manager
 				.setParameter("id", Long.toString(id))
 				.findUnique();
 		
-		return createResponse(parse(res), "L'identifiant "+id+" n'existe pas pour cette ressource");
+		return createResponse(res, "L'identifiant "+id+" n'existe pas pour cette ressource");
 	}
 	
 	/**

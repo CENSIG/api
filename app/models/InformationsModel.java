@@ -54,11 +54,11 @@ public class InformationsModel extends Model
 	
 	public int communes;
 	
-	@JsonInclude(Include.NON_NULL)
+	/*@JsonInclude(Include.NON_NULL)
 	@StringJson
-	public String synonimesString;
+	//public String synonimesString;
 	
 	@ToJson
-	public JsonNode synonimes;
+	//public JsonNode synonimes;*/
 	
 }
