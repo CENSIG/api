@@ -62,4 +62,24 @@ public class TaxonController extends Controller
 	{
 		return TaxonManager.showChilds(id, q);
 	}
+	
+	/**
+	 * Show synonimes for a specific taxon
+	 * @param id The cdnom
+	 * @return	the synonimes
+	 */
+	public static Promise<Result> showSynonimes(Long id) 
+	{
+		return TaxonManager.showSynonimes(id);
+	}
+	
+	/**
+	 * Show brothers for a specific taxon
+	 * @param id the cdnom
+	 * @return the brothers
+	 */
+	public static Promise<Result> showBrothers(Long id)
+	{
+		return TaxonManager.showBrothers(id);
+	}
 }

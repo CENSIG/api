@@ -15,7 +15,6 @@ import com.avaje.ebean.annotation.Sql;
 @Sql
 public class TaxonsModel extends Model
 {
-
 	public String cdnom;
 	
 	public String name;

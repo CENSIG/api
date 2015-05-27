@@ -8,6 +8,7 @@ import models.ChildsModel;
 import models.GeoJsonModel;
 import models.InformationsModel;
 import models.ParentsModel;
+import models.SynonimesModel;
 import models.TaxonsModel;
 import play.Configuration;
 import play.Play;
@@ -81,5 +82,37 @@ public class TaxonManager extends Manager
 		res = (isValid(res)) ? res : null;
 		
 		return createResponse(res, "Aucun taxon trouvé pour la ressource "+id+" et le filtre "+search);
+	}
+	
+	/**
+	 * Get the response (synonimes)
+	 * @param id the cdnom
+	 * @return Json response (json array of synonimes)
+	 */
+	public static Promise<Result> showSynonimes(Long id)
+	{
+		List<SynonimesModel> res = Ebean.createNamedQuery(SynonimesModel.class, "show")
+				.setParameter("id", Long.toString(id))
+				.findList();
+		
+		res = (isValid(res)) ? res : null;
+		
+		return createResponse(res, "Aucun synonimes trouvés pour la ressource "+id);
+	}
+	
+	/**
+	 * Get the response (brothers)
+	 * @param id the cdnom
+	 * @return Json response (json array of brothers)
+	 */
+	public static Promise<Result> showBrothers(Long id)
+	{
+		List<TaxonsModel> res = Ebean.createNamedQuery(TaxonsModel.class, "show")
+				.setParameter("id", Long.toString(id))
+				.findList();
+		
+		res = (isValid(res)) ? res : null;
+		
+		return createResponse(res, "Aucun frêres trouvés pour la ressource "+id);
 	}
 }

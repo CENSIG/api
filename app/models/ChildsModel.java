@@ -6,7 +6,8 @@ import com.avaje.ebean.annotation.Sql;
 
 /**
  * 
- * Model for child of parent taxon
+ * Model for child of parent taxon 
+ * (specific for SQL show childs)
  * @author jean
  *
  */

@@ -171,4 +171,59 @@
     		</query>
     	</raw-sql>
     </entity>
+    <entity class="models.SynonimesModel">
+    	<raw-sql name="show">
+    		<columnMapping column="cd_nom" property="cdnom" />
+    		<columnMapping column="lb_nom" property="name" />
+    		<query>
+    			SELECT cd_nom, observations, lb_nom
+				FROM (
+					WITH syn as (
+						SELECT syn.cd_taxsup, syn.cd_nom, syn.cd_ref AS taxonref, syn.lb_nom
+						FROM inpn.taxref_v8 tax 
+						join inpn.taxref_v8 syn 
+						USING(cd_ref)
+						where tax.cd_nom = :id
+					), info as (
+						SELECT count(id_obs) as observations, cd_nom, lb_nom
+						FROM saisie.saisie_observation
+						join syn
+						using(cd_nom)
+						group by cd_nom, lb_nom
+					)
+					select * from info
+				) as syn
+    		</query>
+    	</raw-sql>
+    </entity>
+    <entity class="models.TaxonsModel">
+    	<raw-sql name="show">
+    		<columnMapping column="cd_nom" property="cdnom" />
+    		<columnMapping column="lb_nom" property="name" />
+    		<query>
+    			SELECT cd_nom, lb_nom
+				FROM (
+					WITH RECURSIVE ancetres as  (
+
+						SELECT cd_taxsup, cd_ref, cd_nom, lb_nom, rang
+						FROM inpn.taxref_v8
+						where cd_nom = :id
+
+						UNION
+
+						SELECT inpn.taxref_v8.cd_taxsup, inpn.taxref_v8.cd_ref, inpn.taxref_v8.cd_nom, inpn.taxref_v8.lb_nom , inpn.taxref_v8.rang
+						FROM inpn.taxref_v8 
+						JOIN ancetres a
+						ON inpn.taxref_v8.cd_taxsup = a.cd_taxsup
+		
+					), brothers as (
+						select cd_nom, lb_nom
+						from ancetres
+						where cd_ref=cd_nom
+					)
+					select * from brothers
+				) as brothers
+    		</query>
+    	</raw-sql>
+    </entity>
 </entity-mappings>
