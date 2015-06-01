@@ -82,4 +82,19 @@ public class TaxonController extends Controller
 	{
 		return TaxonManager.showBrothers(id);
 	}
+	
+	
+	/**
+	 * Show first child (with obs) of a specific taxon
+	 * @param id	 The cdnom of taxon
+	 * @param ordre	 The ordre of taxon
+	 * @param format (optionnal) change the json output
+	 * @return The first child
+	 */
+	@RequiredParamAnnotation("ordre")
+	@StringParamAnnotation("ordre")
+	public static Promise<Result> showFirstChildObs(Long id, String ordre, String format)
+	{
+		return TaxonManager.showFirstChildObs(id, ordre, format);
+	}
 }

@@ -171,8 +171,8 @@
     		</query>
     	</raw-sql>
     </entity>
-    <entity class="models.SynonimesModel">
-    	<raw-sql name="show">
+    <entity class="models.TaxonObsModel">
+    	<raw-sql name="synonymes">
     		<columnMapping column="cd_nom" property="cdnom" />
     		<columnMapping column="lb_nom" property="name" />
     		<query>
@@ -193,6 +193,33 @@
 					)
 					select * from info
 				) as syn
+    		</query>
+    	</raw-sql>
+    	<raw-sql name="firstChildObs">
+    		<columnMapping column="cd_nom" property="cdnom" />
+    		<columnMapping column="lb_nom" property="name" />
+    		<query>
+    			SELECT cd_nom, lb_nom, observations
+				FROM (
+					WITH RECURSIVE obs_child_count AS (
+					
+						SELECT i.cd_nom, i.cd_taxsup, i.lb_nom, count(id_obs) as cnt
+						FROM inpn.taxref_v8 i JOIN saisie.saisie_observation s ON s.cd_nom = i.cd_nom
+						where ordre = :ordre
+						GROUP BY i.cd_nom, i.cd_taxsup, i.lb_nom
+
+						UNION ALL
+
+						SELECT i.cd_nom, i.cd_taxsup, i.lb_nom, o.cnt
+						FROM inpn.taxref_v8 i JOIN obs_child_count o ON i.cd_nom = o.cd_taxsup
+					)
+
+					SELECT cd_nom, lb_nom, sum(cnt) as observations
+					FROM obs_child_count o
+					WHERE cd_taxsup = :id
+					GROUP BY cd_nom, lb_nom 
+					ORDER BY 2
+				) as first_child_obs
     		</query>
     	</raw-sql>
     </entity>
@@ -221,8 +248,37 @@
 						from ancetres
 						where cd_ref=cd_nom
 					)
-					select * from brothers
+					select * from brothers order by 1
 				) as brothers
+    		</query>
+    	</raw-sql>
+    </entity>
+    <entity class="models.ChartObsModel">
+    	<raw-sql name="firstChildObs">
+    		<columnMapping column="lb_nom" property="label" />
+    		<columnMapping column="observations" property="value" />
+    		<query>
+    			SELECT lb_nom, observations
+				FROM (
+					WITH RECURSIVE obs_child_count AS (
+					
+						SELECT i.cd_nom, i.cd_taxsup, i.lb_nom, count(id_obs) as cnt
+						FROM inpn.taxref_v8 i JOIN saisie.saisie_observation s ON s.cd_nom = i.cd_nom
+						where ordre = :ordre
+						GROUP BY i.cd_nom, i.cd_taxsup, i.lb_nom
+
+						UNION ALL
+
+						SELECT i.cd_nom, i.cd_taxsup, i.lb_nom, o.cnt
+						FROM inpn.taxref_v8 i JOIN obs_child_count o ON i.cd_nom = o.cd_taxsup
+					)
+
+					SELECT lb_nom, sum(cnt) as observations
+					FROM obs_child_count o
+					WHERE cd_taxsup = :id
+					GROUP BY cd_nom, lb_nom 
+					ORDER BY 2
+				) as first_child_obs
     		</query>
     	</raw-sql>
     </entity>

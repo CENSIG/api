@@ -4,11 +4,12 @@ import static utils.JsonParse.parse;
 
 import java.util.List;
 
+import models.ChartObsModel;
 import models.ChildsModel;
 import models.GeoJsonModel;
 import models.InformationsModel;
 import models.ParentsModel;
-import models.SynonimesModel;
+import models.TaxonObsModel;
 import models.TaxonsModel;
 import play.Configuration;
 import play.Play;
@@ -16,6 +17,7 @@ import play.libs.F.Promise;
 import play.mvc.Result;
 
 import com.avaje.ebean.Ebean;
+import com.avaje.ebean.Query;
 
 public class TaxonManager extends Manager 
 {
@@ -91,7 +93,7 @@ public class TaxonManager extends Manager
 	 */
 	public static Promise<Result> showSynonimes(Long id)
 	{
-		List<SynonimesModel> res = Ebean.createNamedQuery(SynonimesModel.class, "show")
+		List<TaxonObsModel> res = Ebean.createNamedQuery(TaxonObsModel.class, "synonymes")
 				.setParameter("id", Long.toString(id))
 				.findList();
 		
@@ -115,4 +117,32 @@ public class TaxonManager extends Manager
 		
 		return createResponse(res, "Aucun frêres trouvés pour la ressource "+id);
 	}
+	
+	/**
+	 * Get the response (first child)
+	 * @param id	 The cdnom
+	 * @param ordre	 The ordre
+	 * @param format (optionnal) output for json
+	 * @return Json response (json array of first childs)
+	 */
+	public static Promise<Result> showFirstChildObs(Long id, String ordre, String format)
+	{
+		Query query = null;
+		
+		if (format.equals("base")) {
+			query = Ebean.createNamedQuery(TaxonObsModel.class, "firstChildObs");
+		} else {
+			query = Ebean.createNamedQuery(ChartObsModel.class, "firstChildObs");
+				
+		}
+		
+		List res = query.setParameter("id", Long.toString(id))
+				.setParameter("ordre", ordre)
+				.findList();
+		
+		res = (isValid(res)) ? res : null;
+		
+		return createResponse(res, "Aucun fils direct trouvés pour la ressource "+id);
+	}
 }
+

@@ -13,7 +13,7 @@ import com.avaje.ebean.annotation.Sql;
  */
 @Entity
 @Sql
-public class SynonimesModel extends TaxonsModel 
+public class TaxonObsModel extends TaxonsModel 
 {
 	public int observations;
 }

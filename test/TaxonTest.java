@@ -44,6 +44,20 @@ public class TaxonTest extends WithApplication
 	
 	private static final String URI_TAXON_185214_CHILDS_MACU = API + "/taxon/185214/childs?q=macu";
 	
+	private static final String URI_TAXON_1_BROTHERS = API + "/taxon/1/brothers";
+	
+	private static final String URI_TAXON_2018_BROTHERS = API + "/taxon/2018/brothers";
+	
+	private static final String URI_TAXON_1_FIRST_CHILD = API + "/taxon/1/first_child_obs";
+	
+	private static final String URI_TAXON_2018_FIRST_CHILD_ORDRE_2 = API + "/taxon/2018/first_child_obs?ordre=2";
+	
+	private static final String URI_TAXON_2018_FIRST_CHILD_ORDRE_LEPI = API + "/taxon/2018/first_child_obs?ordre=Lepidoptera";
+	
+	private static final String URI_TAXON_185214_FIRST_CHILD_ORDRE_LEPI = API + "/taxon/185214/first_child_obs?ordre=Lepidoptera";
+	
+	
+	
 	@Test
 	public void testShowGeoJson()
 	{
@@ -142,5 +156,44 @@ public class TaxonTest extends WithApplication
 		assertThat(first.has("isref")).isTrue();
 		assertThat(first.has("observations")).isTrue();
 		assertThat(first.has("troll")).isFalse();
+	}
+	
+	@Test
+	public void testShowBrothers()
+	{
+		Result result = route(fakeRequest(GET, URI_TAXON_1_BROTHERS));
+		assertThat(status(result)).isEqualTo(NOT_FOUND);
+		
+		result = route(fakeRequest(GET, URI_TAXON_2018_BROTHERS));
+		assertThat(status(result)).isEqualTo(OK);
+		
+		assertThat(contentType(result)).isEqualTo("application/json");
+	}
+	
+	@Test
+	public void testShowBrothersContent()
+	{
+		Result result = route(fakeRequest(GET, URI_TAXON_2018_BROTHERS));
+		JsonNode json = Json.parse(contentAsString(result));
+		assertThat(json.isArray()).isTrue();
+		JsonNode first = json.get(0);
+		assertThat(first.has("cdnom")).isTrue();
+	}
+	
+	@Test 
+	public void testShowFirstChildObs()
+	{
+		Result result = route(fakeRequest(GET, URI_TAXON_1_FIRST_CHILD));
+		assertThat(status(result)).isEqualTo(422);
+		
+	    result = route(fakeRequest(GET, URI_TAXON_2018_FIRST_CHILD_ORDRE_2));
+	    assertThat(status(result)).isEqualTo(422);
+	    
+	    result = route(fakeRequest(GET, URI_TAXON_2018_FIRST_CHILD_ORDRE_LEPI));
+	    assertThat(status(result)).isEqualTo(NOT_FOUND);
+	    
+	    result = route(fakeRequest(GET, URI_TAXON_185214_FIRST_CHILD_ORDRE_LEPI));
+	    assertThat(status(result)).isEqualTo(OK);
+	    
 	}
 }

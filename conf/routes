@@ -13,3 +13,5 @@ GET		/apiv1/taxon/:id/childs 				controllers.TaxonController.showChilds(id: Long
 GET		/apiv1/taxon/:id/synonimes 				controllers.TaxonController.showSynonimes(id: Long)
 
 GET		/apiv1/taxon/:id/brothers 				controllers.TaxonController.showBrothers(id: Long)
+
+GET 	/apiv1/taxon/:id/first_child_obs		controllers.TaxonController.showFirstChildObs(id: Long, ordre: String ?= "0", format: String ?= "base")
