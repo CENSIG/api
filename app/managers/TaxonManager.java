@@ -125,7 +125,7 @@ public class TaxonManager extends Manager
 	 * @param format (optionnal) output for json
 	 * @return Json response (json array of first childs)
 	 */
-	public static Promise<Result> showFirstChildObs(Long id, String ordre, String format)
+	public static Promise<Result> showFirstChildObs(Long id, String format)
 	{
 		Query query = null;
 		
@@ -137,7 +137,6 @@ public class TaxonManager extends Manager
 		}
 		
 		List res = query.setParameter("id", Long.toString(id))
-				.setParameter("ordre", ordre)
 				.findList();
 		
 		res = (isValid(res)) ? res : null;

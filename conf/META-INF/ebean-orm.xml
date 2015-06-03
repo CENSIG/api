@@ -68,45 +68,43 @@
     		<columnMapping column="nom_vern" property="nomVern" />
     		<query>
     			SELECT cd_taxsup, cd_nom, nom_vern, lb_nom, rang, ordre, phylum, 
-				       classe, famille, observations, especes, communes, observateurs
+       				   classe, famille, observations, especes, communes, observateurs
 				FROM (
-					WITH RECURSIVE fils as  (
-	
-     					SELECT cd_taxsup, cd_nom, cd_ref AS taxonref
-     					FROM inpn.taxref_v8
-     					where cd_nom = :id
+					WITH RECURSIVE descendants(cd_nom, cd_taxsup, cd_ref, info) AS (
+	  					SELECT cd_nom, cd_taxsup, cd_ref, array[cd_nom, cd_taxsup, ordre, phylum, famille, classe, nom_vern, lb_nom, rang] as info
+	  					FROM inpn.taxref_v8
+	 					WHERE cd_nom = :id
+	   
+						UNION ALL
 
-     					UNION
+	  					SELECT e.cd_nom, e.cd_taxsup, e.cd_ref, info
+	  					FROM descendants AS ss
+	 					JOIN inpn.taxref_v8 AS e
+	  					ON e.cd_taxsup = ss.cd_nom
+					)
 
-     					SELECT syn.cd_taxsup, syn.cd_nom, syn.cd_ref AS taxonref
-     					FROM inpn.taxref_v8 tax join inpn.taxref_v8 syn USING(cd_ref)
-     					where tax.cd_nom = :id
-
-     					UNION
-
-     					SELECT tax.cd_taxsup, tax.cd_nom, f.taxonref
-    					FROM inpn.taxref_v8 tax
-     					JOIN fils f
-     					ON tax.cd_taxsup = f.cd_nom
-
-					), data as (
-
-						SELECT count(id_obs) as observations, count(distinct cd_nom) as especes, count(distinct code_insee) as communes, 
-					  		   count(distinct observateur) as observateurs, taxonref
-						from fils f join saisie.saisie_observation using(cd_nom)
-						GROUP BY taxonref
-
-					), info as (
-
-						SELECT cd_taxsup, cd_nom, nom_vern, lb_nom, rang, ordre, phylum, 
-				       		   classe, famille, observations, especes, communes, observateurs
-     					FROM inpn.taxref_v8 i join data on cd_ref = data.taxonref
-     					where i.cd_nom = data.taxonref
-     					GROUP BY cd_taxsup, cd_ref, cd_nom, lb_nom, rang, ordre, phylum, classe, famille, nom_vern,
-     							 observations, especes, communes, observateurs
- 					)
- 					select * from info
-				) as info
+					SELECT 
+						info[1] as cd_nom,
+						info[8] as lb_nom,
+						info[2] as cd_taxsup,
+						info[3] as ordre,
+						info[4] as phylum,
+						info[5] as famille,
+						info[6] as classe,
+						info[7] as nom_vern,
+						info[9] as rang,
+						count(id_obs) as observations,
+						count(distinct code_insee) as communes,
+						count(distinct observateur) as observateurs,
+						count(distinct o.cd_nom) as especes
+					FROM descendants ss
+					JOIN inpn.taxref_v8 i
+					ON i.cd_ref = ss.cd_ref
+					JOIN saisie.saisie_observation o
+					ON i.cd_nom = o.cd_nom
+					WHERE i.cd_ref = ss.cd_nom
+					group by info[1], info[2], info[3], info[4], info[5], info[6], info[7], info[8], info[9]
+				) as infos
  			</query>
     	</raw-sql>
     </entity>
@@ -201,24 +199,27 @@
     		<query>
     			SELECT cd_nom, lb_nom, observations
 				FROM (
-					WITH RECURSIVE obs_child_count AS (
-					
-						SELECT i.cd_nom, i.cd_taxsup, i.lb_nom, count(id_obs) as cnt
-						FROM inpn.taxref_v8 i JOIN saisie.saisie_observation s ON s.cd_nom = i.cd_nom
-						where ordre = :ordre
-						GROUP BY i.cd_nom, i.cd_taxsup, i.lb_nom
-
+					WITH RECURSIVE descendants(cd_nom, cd_taxsup, profondeur) AS (
+						SELECT cd_nom, cd_taxsup, lb_nom
+	  					FROM inpn.taxref_v8
+	  					WHERE cd_nom = :id
 						UNION ALL
-
-						SELECT i.cd_nom, i.cd_taxsup, i.lb_nom, o.cnt
-						FROM inpn.taxref_v8 i JOIN obs_child_count o ON i.cd_nom = o.cd_taxsup
+	 					SELECT e.cd_nom, e.cd_taxsup, concat(profondeur,'->',concat(e.lb_nom,':',e.cd_nom))
+	  					FROM descendants AS ss
+	  					JOIN inpn.taxref_v8 AS e
+	  					ON e.cd_taxsup = ss.cd_nom
 					)
 
-					SELECT cd_nom, lb_nom, sum(cnt) as observations
-					FROM obs_child_count o
-					WHERE cd_taxsup = :id
-					GROUP BY cd_nom, lb_nom 
-					ORDER BY 2
+					SELECT 
+						split_part(split_part(profondeur,'->',2),':',2) as cd_nom,
+						split_part(split_part(profondeur,'->',2),':',1) as lb_nom,
+						count(distinct id_obs) as observations
+					FROM descendants 
+					JOIN saisie.saisie_observation
+					USING(cd_nom)
+					WHERE profondeur ILIKE '%->%'
+					GROUP BY split_part(profondeur,'->',2)
+					ORDER BY observations desc
 				) as first_child_obs
     		</query>
     	</raw-sql>
@@ -260,24 +261,27 @@
     		<query>
     			SELECT lb_nom, observations
 				FROM (
-					WITH RECURSIVE obs_child_count AS (
-					
-						SELECT i.cd_nom, i.cd_taxsup, i.lb_nom, count(id_obs) as cnt
-						FROM inpn.taxref_v8 i JOIN saisie.saisie_observation s ON s.cd_nom = i.cd_nom
-						where ordre = :ordre
-						GROUP BY i.cd_nom, i.cd_taxsup, i.lb_nom
-
+					WITH RECURSIVE descendants(cd_nom, cd_taxsup, profondeur) AS (
+						SELECT cd_nom, cd_taxsup, lb_nom
+	  					FROM inpn.taxref_v8
+	  					WHERE cd_nom = :id
 						UNION ALL
-
-						SELECT i.cd_nom, i.cd_taxsup, i.lb_nom, o.cnt
-						FROM inpn.taxref_v8 i JOIN obs_child_count o ON i.cd_nom = o.cd_taxsup
+	 					SELECT e.cd_nom, e.cd_taxsup, concat(profondeur,'->',concat(e.lb_nom,':',e.cd_nom))
+	  					FROM descendants AS ss
+	  					JOIN inpn.taxref_v8 AS e
+	  					ON e.cd_taxsup = ss.cd_nom
 					)
 
-					SELECT lb_nom, sum(cnt) as observations
-					FROM obs_child_count o
-					WHERE cd_taxsup = :id
-					GROUP BY cd_nom, lb_nom 
-					ORDER BY 2
+					SELECT 
+						split_part(split_part(profondeur,'->',2),':',2) as cd_nom,
+						split_part(split_part(profondeur,'->',2),':',1) as lb_nom,
+						count(distinct id_obs) as observations
+					FROM descendants 
+					JOIN saisie.saisie_observation
+					USING(cd_nom)
+					WHERE profondeur ILIKE '%->%'
+					GROUP BY split_part(profondeur,'->',2)
+					ORDER BY observations desc
 				) as first_child_obs
     		</query>
     	</raw-sql>

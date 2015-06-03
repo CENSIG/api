@@ -91,10 +91,8 @@ public class TaxonController extends Controller
 	 * @param format (optionnal) change the json output
 	 * @return The first child
 	 */
-	@RequiredParamAnnotation("ordre")
-	@StringParamAnnotation("ordre")
-	public static Promise<Result> showFirstChildObs(Long id, String ordre, String format)
+	public static Promise<Result> showFirstChildObs(Long id, String format)
 	{
-		return TaxonManager.showFirstChildObs(id, ordre, format);
+		return TaxonManager.showFirstChildObs(id, format);
 	}
 }
