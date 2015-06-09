@@ -100,7 +100,7 @@
 					FROM descendants ss
 					JOIN inpn.taxref_v8 i
 					ON i.cd_ref = ss.cd_ref
-					JOIN saisie.saisie_observation o
+					LEFT JOIN saisie.saisie_observation o
 					ON i.cd_nom = o.cd_nom
 					WHERE i.cd_ref = ss.cd_nom
 					group by info[1], info[2], info[3], info[4], info[5], info[6], info[7], info[8], info[9]
