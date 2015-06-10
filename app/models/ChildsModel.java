@@ -17,8 +17,6 @@ public class ChildsModel extends TaxonsModel
 {
 	public boolean isref;
 	
-	public int observations;
-	
 	public String cdref;
 	
 	public String nameRef;

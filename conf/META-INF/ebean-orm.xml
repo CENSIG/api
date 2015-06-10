@@ -142,7 +142,7 @@
     		<columnMapping column="cd_ref" property="cdref" />
     		<columnMapping column="nom_valide" property="nameRef" />
     		<query>
-    			SELECT cd_nom, isref, lb_nom, observations, cd_ref, nom_valide
+    			SELECT cd_nom, isref, lb_nom, cd_ref, nom_valide
 				FROM (
 					WITH RECURSIVE ancetres as  (
 
@@ -158,41 +158,19 @@
 						ON inpn.taxref_v8.cd_taxsup = a.cd_nom
 					)
 
-					select a.cd_nom, a.cd_ref=a.cd_nom as isref, a.lb_nom, count(id_obs) as observations, a.cd_ref, a.nom_valide
+					select a.cd_nom, a.cd_ref=a.cd_nom as isref, a.lb_nom, a.cd_ref, a.nom_valide
 					from ancetres a
 					left join saisie.saisie_observation o
 					using (cd_nom)
 					where lower(lb_nom) like lower(:q) or lower(nom_valide) like lower(:q)
 					group by a.cd_nom, a.cd_ref, a.lb_nom, a.nom_valide
 					order by isref desc, lb_nom asc
+					limit 50
 				) as childs
     		</query>
     	</raw-sql>
     </entity>
     <entity class="models.TaxonObsModel">
-    	<raw-sql name="synonymes">
-    		<columnMapping column="cd_nom" property="cdnom" />
-    		<columnMapping column="lb_nom" property="name" />
-    		<query>
-    			SELECT cd_nom, observations, lb_nom
-				FROM (
-					WITH syn as (
-						SELECT syn.cd_taxsup, syn.cd_nom, syn.cd_ref AS taxonref, syn.lb_nom
-						FROM inpn.taxref_v8 tax 
-						join inpn.taxref_v8 syn 
-						USING(cd_ref)
-						where tax.cd_nom = :id
-					), info as (
-						SELECT count(id_obs) as observations, cd_nom, lb_nom
-						FROM saisie.saisie_observation
-						join syn
-						using(cd_nom)
-						group by cd_nom, lb_nom
-					)
-					select * from info
-				) as syn
-    		</query>
-    	</raw-sql>
     	<raw-sql name="firstChildObs">
     		<columnMapping column="cd_nom" property="cdnom" />
     		<columnMapping column="lb_nom" property="name" />

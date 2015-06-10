@@ -78,7 +78,7 @@ public class TaxonManager extends Manager
 	{
 		List<ChildsModel> res = Ebean.createNamedQuery(ChildsModel.class, "show")
 				.setParameter("id", Long.toString(id))
-				.setParameter("q", "%"+search+"%")
+				.setParameter("q", search+"%")
 				.findList();
 		
 		res = (isValid(res)) ? res : null;
