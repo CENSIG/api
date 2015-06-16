@@ -175,31 +175,40 @@
     		<columnMapping column="cd_nom" property="cdnom" />
     		<columnMapping column="lb_nom" property="name" />
     		<query>
-    			SELECT cd_nom, lb_nom, observations
-				FROM (
-					WITH RECURSIVE descendants(cd_nom, cd_taxsup, profondeur) AS (
-						SELECT cd_nom, cd_taxsup, lb_nom
-	  					FROM inpn.taxref_v8
-	  					WHERE cd_nom = :id
-						UNION ALL
-	 					SELECT e.cd_nom, e.cd_taxsup, concat(profondeur,'->',concat(e.lb_nom,':',e.cd_nom))
-	  					FROM descendants AS ss
-	  					JOIN inpn.taxref_v8 AS e
-	  					ON e.cd_taxsup = ss.cd_nom
-					)
+					SELECT cd_nom, lb_nom, observations
+					FROM (
+						WITH RECURSIVE descendants(cd_nom, cd_ref, cd_taxsup, profondeur) AS (
+							SELECT cd_nom, cd_ref, cd_taxsup, lb_nom
+							FROM inpn.taxref_v8
+							WHERE cd_nom = :id 
+							UNION ALL
+							SELECT e.cd_nom, e.cd_ref, e.cd_taxsup, concat(profondeur,'->',concat(e.lb_nom,':',e.cd_nom))
+							FROM descendants AS ss
+							JOIN inpn.taxref_v8 AS e
+							ON e.cd_taxsup = ss.cd_nom and e.cd_ref = e.cd_nom
 
-					SELECT 
-						split_part(split_part(profondeur,'->',2),':',2) as cd_nom,
-						split_part(split_part(profondeur,'->',2),':',1) as lb_nom,
-						count(distinct id_obs) as observations
-					FROM descendants 
-					JOIN saisie.saisie_observation
-					USING(cd_nom)
-					WHERE profondeur ILIKE '%->%'
-					GROUP BY split_part(profondeur,'->',2)
-					ORDER BY observations desc
-				) as first_child_obs
-    		</query>
+						), data as (
+
+							SELECT count(distinct id_obs) as observations, i.cd_ref
+							from saisie.saisie_observation
+							join inpn.taxref_v8 i
+							using(cd_nom)
+							where cd_ref in (select cd_ref from descendants)
+							group by i.cd_ref
+						)
+
+						SELECT 
+							split_part(split_part(profondeur,'->',2),':',2) as cd_nom,
+							split_part(split_part(profondeur,'->',2),':',1) as lb_nom,
+							sum(observations) as observations
+						FROM descendants 
+						JOIN data
+						USING(cd_ref)
+						WHERE profondeur ILIKE '%->%'
+						GROUP BY split_part(profondeur,'->',2)
+						ORDER BY observations desc
+					) as first_child_obs
+				</query>
     	</raw-sql>
     </entity>
     <entity class="models.TaxonsModel">
