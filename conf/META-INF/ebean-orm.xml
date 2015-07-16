@@ -15,7 +15,7 @@
 
                          SELECT syn.cd_taxsup, syn.cd_nom, syn.cd_ref AS aïeul, syn.lb_nom
                          FROM inpn.taxref_v8 tax join inpn.taxref_v8 syn USING(cd_ref)
-                         where tax.cd_nom = '195412'
+                         where tax.cd_nom = :id 
 
                          UNION
 
