@@ -4,59 +4,50 @@
     	<raw-sql name="show">
     		 <columnMapping column="features" property="featuresString" />
     		<query>
-    			SELECT type, features
-				FROM (
-					WITH RECURSIVE ancetres as  (
+    			SELECT type, features FROM (
+                     WITH RECURSIVE ancetres as  (
 
-						SELECT cd_taxsup, cd_nom, cd_ref as aïeul, lb_nom					
-						FROM inpn.taxref_v8
-						where cd_nom = :id
+                         SELECT cd_taxsup, cd_nom, cd_ref as aïeul, lb_nom
+                         FROM inpn.taxref_v8
+                         where cd_nom = :id
 
-						UNION
+                         UNION
 
-						SELECT syn.cd_taxsup, syn.cd_nom, syn.cd_ref AS aïeul, syn.lb_nom
-						FROM inpn.taxref_v8 tax join inpn.taxref_v8 syn USING(cd_ref)
-						where tax.cd_nom = :id
+                         SELECT syn.cd_taxsup, syn.cd_nom, syn.cd_ref AS aïeul, syn.lb_nom
+                         FROM inpn.taxref_v8 tax join inpn.taxref_v8 syn USING(cd_ref)
+                         where tax.cd_nom = '195412'
 
-						UNION
+                         UNION
 
-						SELECT tax.cd_taxsup, tax.cd_nom, f.aïeul, f.lb_nom
-						FROM inpn.taxref_v8 tax
-						JOIN ancetres f
-						ON tax.cd_taxsup = f.cd_nom
+                         SELECT tax.cd_taxsup, tax.cd_nom, f.aïeul, f.lb_nom
+                         FROM inpn.taxref_v8 tax
+                         JOIN ancetres f
+                         ON tax.cd_taxsup = f.cd_nom
 
-					), data as (
+                     ), grid as (
+                         select distinct g.geometrie_4326
+                         from export.grille_10km g
+                         join ign_geofla.commune c
+                         on st_intersects(c.geometrie, g.geometrie)
+                         where code_reg = '91'
+                         --group by g.geometrie
 
-						SELECT cd_nom, obs.geometrie, id_obs
-						FROM ancetres a
-						JOIN saisie.saisie_observation obs
-						using (cd_nom)
-						group by cd_nom, obs.geometrie, id_obs
-						
-					), grid as (
+                     ), feature as (
 
-						select g.geometrie
-						from export.grille_10km g
-						join ign_geofla.commune c
-						on st_intersects(c.geometrie, g.geometrie)
-						where code_reg = '91'
-						group by g.geometrie
+                         SELECT 'Feature' AS type,
+                         to_json(count(DISTINCT id_obs)) AS properties,-- pour 9.3+
+                         cast(ST_AsGeoJson(geometrie_4326) as json) AS geometry
+                         FROM grid g
+                         LEFT JOIN saisie.saisie_observation obs ON st_intersects(obs.geometrie, g.geometrie_4326)
+                         JOIN ancetres a ON a.cd_nom = obs.cd_nom
+                         group by g.geometrie_4326
+                     )
 
-					), feature as (
+                     SELECT 'FeatureCollection' as type
+                     , array_to_json(array_agg(feature)) as features
+                     from feature
+                 ) as geojson
 
-						SELECT 'Feature' AS type
-						, row_to_json((SELECT ct FROM (SELECT count(id_obs) AS nombres) AS ct)) AS properties
-						, cast(ST_AsGeoJson(st_transform(g.geometrie, 4326)) as json) AS geometry
-						FROM grid g
-						left JOIN data obs
-						ON st_intersects(obs.geometrie, g.geometrie)
-						group by g.geometrie
-					)
-				
-					SELECT 'FeatureCollection' as type
-					, array_to_json(array_agg(feature)) as features
-					from feature
-				) as geojson
     		</query>
     	</raw-sql>
     </entity>
