@@ -35,7 +35,8 @@
                      ), feature as (
 
                          SELECT 'Feature' AS type,
-                         to_json(count(DISTINCT id_obs)) AS properties,-- pour 9.3+
+                         --to_json(count(DISTINCT id_obs)) AS properties,
+												 row_to_json((SELECT ct FROM (SELECT count(id_obs) AS nombres) AS ct)) AS properties,
                          cast(ST_AsGeoJson(geometrie_4326) as json) AS geometry
                          FROM grid g
                          LEFT JOIN saisie.saisie_observation obs ON st_intersects(obs.geometrie, g.geometrie_4326)
