@@ -15,6 +15,11 @@ import play.libs.Json;
 import play.mvc.Result;
 import play.test.WithApplication;
 
+/**
+ * Taxon unit test
+ * @author Jean BOUDET
+ *
+ */
 
 public class TaxonTest extends WithApplication 
 {
@@ -50,11 +55,11 @@ public class TaxonTest extends WithApplication
 	
 	private static final String URI_TAXON_1_FIRST_CHILD = API + "/taxon/1/first_child_obs";
 	
-	private static final String URI_TAXON_2018_FIRST_CHILD_ORDRE_2 = API + "/taxon/2018/first_child_obs?ordre=2";
+	private static final String URI_TAXON_2018_FIRST_CHILD = API + "/taxon/2018/first_child_obs";
 	
-	private static final String URI_TAXON_2018_FIRST_CHILD_ORDRE_LEPI = API + "/taxon/2018/first_child_obs?ordre=Lepidoptera";
+	private static final String URI_TAXON_185214_FIRST_CHILD= API + "/taxon/185214/first_child_obs";
 	
-	private static final String URI_TAXON_185214_FIRST_CHILD_ORDRE_LEPI = API + "/taxon/185214/first_child_obs?ordre=Lepidoptera";
+	private static final String URI_TAXON_185214_PHOTOS= API + "/taxon/185214/photos";
 	
 	
 	
@@ -184,16 +189,22 @@ public class TaxonTest extends WithApplication
 	public void testShowFirstChildObs()
 	{
 		Result result = route(fakeRequest(GET, URI_TAXON_1_FIRST_CHILD));
-		assertThat(status(result)).isEqualTo(422);
+		assertThat(status(result)).isEqualTo(NOT_FOUND);
 		
-	    result = route(fakeRequest(GET, URI_TAXON_2018_FIRST_CHILD_ORDRE_2));
-	    assertThat(status(result)).isEqualTo(422);
-	    
-	    result = route(fakeRequest(GET, URI_TAXON_2018_FIRST_CHILD_ORDRE_LEPI));
+	    result = route(fakeRequest(GET, URI_TAXON_2018_FIRST_CHILD));
 	    assertThat(status(result)).isEqualTo(NOT_FOUND);
 	    
-	    result = route(fakeRequest(GET, URI_TAXON_185214_FIRST_CHILD_ORDRE_LEPI));
+	    result = route(fakeRequest(GET, URI_TAXON_185214_FIRST_CHILD));
 	    assertThat(status(result)).isEqualTo(OK);
 	    
+	}
+	
+	@Test
+	public void testShowPhoto()
+	{
+		 Result result = route(fakeRequest(GET, URI_TAXON_185214_PHOTOS));
+		 assertThat(status(result)).isEqualTo(OK);
+		 
+		 assertThat(contentType(result)).isEqualTo("application/json");
 	}
 }
