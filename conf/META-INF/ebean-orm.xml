@@ -5,50 +5,49 @@
     		 <columnMapping column="features" property="featuresString" />
     		<query>
     			SELECT type, features FROM (
-                     WITH RECURSIVE ancetres as  (
+				WITH RECURSIVE ancetres as  (
 
-                         SELECT cd_taxsup, cd_nom, cd_ref as aïeul, lb_nom
-                         FROM inpn.taxref_v8
-                         where cd_nom = :id
+					SELECT cd_taxsup, cd_nom, cd_ref as aïeul, lb_nom
+					FROM inpn.taxref_v8
+					where cd_nom = :id
 
-                         UNION
+					UNION
 
-                         SELECT syn.cd_taxsup, syn.cd_nom, syn.cd_ref AS aïeul, syn.lb_nom
-                         FROM inpn.taxref_v8 tax join inpn.taxref_v8 syn USING(cd_ref)
-                         where tax.cd_nom = :id 
+					SELECT syn.cd_taxsup, syn.cd_nom, syn.cd_ref AS aïeul, syn.lb_nom
+					FROM inpn.taxref_v8 tax join inpn.taxref_v8 syn USING(cd_ref)
+					where tax.cd_nom = :id
 
-                         UNION
+					UNION
 
-                         SELECT tax.cd_taxsup, tax.cd_nom, f.aïeul, f.lb_nom
-                         FROM inpn.taxref_v8 tax
-                         JOIN ancetres f
-                         ON tax.cd_taxsup = f.cd_nom
+					SELECT tax.cd_taxsup, tax.cd_nom, f.aïeul, f.lb_nom
+					FROM inpn.taxref_v8 tax
+					JOIN ancetres f
+					ON tax.cd_taxsup = f.cd_nom
 
-                     ), grid as (
-                         select distinct g.geometrie_4326
-                         from export.grille_10km g
-                         join ign_geofla.commune c
-                         on st_intersects(c.geometrie, g.geometrie)
-                         where code_reg = '91'
-                         --group by g.geometrie
+			), grid as (
+				 select distinct st_transform(g.geometrie, 4326) as geometrie
+				 from export.grille_10km g
+				 join ign_geofla.commune c
+				 on st_intersects(c.geometrie, g.geometrie)
+				 where code_reg = '91'
+				 --group by g.geometrie
 
-                     ), feature as (
+			), feature as (
 
-                         SELECT 'Feature' AS type,
-                         --to_json(count(DISTINCT id_obs)) AS properties,
-												 row_to_json((SELECT ct FROM (SELECT count(id_obs) AS nombres) AS ct)) AS properties,
-                         cast(ST_AsGeoJson(geometrie_4326) as json) AS geometry
-                         FROM grid g
-                         LEFT JOIN saisie.saisie_observation obs ON st_intersects(obs.geometrie, g.geometrie_4326)
-                         JOIN ancetres a ON a.cd_nom = obs.cd_nom
-                         group by g.geometrie_4326
-                     )
+				SELECT 'Feature' AS type,
+				--to_json(count(DISTINCT id_obs)) AS properties,
+				row_to_json((SELECT ct FROM (SELECT count(id_obs) AS nombres) AS ct)) AS properties,
+				cast(ST_AsGeoJson(g.geometrie, 4326) as json) AS geometry
+				FROM grid g
+				LEFT JOIN saisie.saisie_observation obs ON st_intersects(obs.geometrie,g.geometrie)
+				JOIN ancetres a ON a.cd_nom = obs.cd_nom
+				group by g.geometrie
+			)
 
-                     SELECT 'FeatureCollection' as type
-                     , array_to_json(array_agg(feature)) as features
-                     from feature
-                 ) as geojson
-
+			SELECT 'FeatureCollection' as type
+			, array_to_json(array_agg(feature)) as features
+			from feature
+			) as geojson
     		</query>
     	</raw-sql>
     </entity>
@@ -233,36 +232,40 @@
     		</query>
     	</raw-sql>
     </entity>
-    <entity class="models.ChartObsModel">
-    	<raw-sql name="firstChildObs">
-    		<columnMapping column="lb_nom" property="label" />
-    		<columnMapping column="observations" property="value" />
+    <entity class="models.PhotoModel">
+    	<raw-sql name="show">
+    		<columnMapping column="cd_ref" property="cdref" />
+    		<columnMapping column="lb_nom" property="nom" />
+    		<columnMapping column="nom_vern" property="nomVern" />
+    		<columnMapping column="url_photo" property="urlPhoto" />
+    		<columnMapping column="url_photo_resize" property="urlPhotoResize" />
     		<query>
-    			SELECT lb_nom, observations
+    			SELECT cd_ref, lb_nom, nom_vern, url_photo, url_photo_resize
 				FROM (
-					WITH RECURSIVE descendants(cd_nom, cd_taxsup, profondeur) AS (
-						SELECT cd_nom, cd_taxsup, lb_nom
-	  					FROM inpn.taxref_v8
-	  					WHERE cd_nom = :id
-						UNION ALL
-	 					SELECT e.cd_nom, e.cd_taxsup, concat(profondeur,'->',concat(e.lb_nom,':',e.cd_nom))
-	  					FROM descendants AS ss
-	  					JOIN inpn.taxref_v8 AS e
-	  					ON e.cd_taxsup = ss.cd_nom
+ 					WITH RECURSIVE ancetres as  (
+
+						SELECT cd_taxsup, cd_ref, cd_nom, lb_nom, nom_vern
+						FROM inpn.taxref_v8
+						where cd_nom = :id
+
+						UNION
+
+						SELECT inpn.taxref_v8.cd_taxsup, inpn.taxref_v8.cd_ref, inpn.taxref_v8.cd_nom, inpn.taxref_v8.lb_nom, inpn.taxref_v8.nom_vern
+						FROM inpn.taxref_v8
+						join ancetres a
+						on inpn.taxref_v8.cd_taxsup = a.cd_nom
 					)
 
-					SELECT 
-						split_part(split_part(profondeur,'->',2),':',2) as cd_nom,
-						split_part(split_part(profondeur,'->',2),':',1) as lb_nom,
-						count(distinct id_obs) as observations
-					FROM descendants 
-					JOIN saisie.saisie_observation
-					USING(cd_nom)
-					WHERE profondeur ILIKE '%->%'
-					GROUP BY split_part(profondeur,'->',2)
-					ORDER BY observations desc
-				) as first_child_obs
-    		</query>
-    	</raw-sql>
+					select a.cd_ref, a.lb_nom, split_part(a.nom_vern, ',', 1) as nom_vern, i.url_photo, url_photo_resize
+					from ancetres a
+					join saisie.saisie_observation o
+					on a.cd_nom = o.cd_nom
+					join contenu.images i
+					on o.id_obs = i.id_obs
+					order by random()
+					limit 4
+				) as photos
+			</query>
+		</raw-sql>
     </entity>
 </entity-mappings>
