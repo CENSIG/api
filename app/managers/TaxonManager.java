@@ -9,6 +9,7 @@ import models.ChildsModel;
 import models.GeoJsonModel;
 import models.InformationsModel;
 import models.ParentsModel;
+import models.PhotoModel;
 import models.TaxonObsModel;
 import models.TaxonsModel;
 import play.Configuration;
@@ -125,23 +126,31 @@ public class TaxonManager extends Manager
 	 * @param format (optionnal) output for json
 	 * @return Json response (json array of first childs)
 	 */
-	public static Promise<Result> showFirstChildObs(Long id, String format)
+	public static Promise<Result> showFirstChildObs(Long id)
 	{
-		Query query = null;
-		
-		if (format.equals("base")) {
-			query = Ebean.createNamedQuery(TaxonObsModel.class, "firstChildObs");
-		} else {
-			query = Ebean.createNamedQuery(ChartObsModel.class, "firstChildObs");
-				
-		}
-		
-		List res = query.setParameter("id", Long.toString(id))
+		List<TaxonObsModel> res = Ebean.createNamedQuery(TaxonObsModel.class, "firstChildObs")
+				.setParameter("id", Long.toString(id))
 				.findList();
 		
 		res = (isValid(res)) ? res : null;
 		
 		return createResponse(res, "Aucun fils direct trouvés pour la ressource "+id);
+	}
+
+	/**
+	 * Get the response (photo)
+	 * @param id the cdnom
+	 * @return Json response (json array photo)
+	 */
+	public static Promise<Result> showPhotos(Long id) {
+		
+		List<PhotoModel> res = Ebean.createNamedQuery(PhotoModel.class, "show")
+				.setParameter("id", Long.toString(id))
+				.findList();
+		
+		res = (isValid(res)) ? res : null;
+		
+		return createResponse(res, "Aucune photos trouvés pour la ressource "+id);
 	}
 }
 

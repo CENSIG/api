@@ -91,8 +91,19 @@ public class TaxonController extends Controller
 	 * @param format (optionnal) change the json output
 	 * @return The first child
 	 */
-	public static Promise<Result> showFirstChildObs(Long id, String format)
+	public static Promise<Result> showFirstChildObs(Long id)
 	{
-		return TaxonManager.showFirstChildObs(id, format);
+		return TaxonManager.showFirstChildObs(id);
+	}
+	
+	/**
+	 * Show photo of a specific taxon
+	 * @param id
+	 * @return the list of photos
+	 */
+	public static Promise<Result> showPhotos(Long id)
+	{
+		
+		return TaxonManager.showPhotos(id);
 	}
 }
