@@ -262,6 +262,7 @@
 					on a.cd_nom = o.cd_nom
 					join contenu.images i
 					on o.id_obs = i.id_obs
+					where url_photo_resize is not null
 					order by random()
 					limit 4
 				) as photos
