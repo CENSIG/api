@@ -48,6 +48,11 @@ public final class JsonParse
 		if (geomStringField != null && geomJsonField != null) {
 			try {
 				Object typeString = geomStringField.getType().cast(geomStringField.get(a));
+
+				if (typeString == null) {
+					return null;
+				}
+
 				geomJsonField.set(a, Json.parse((String) typeString));
 				geomStringField.set(a, null);
 			} catch (IllegalArgumentException | IllegalAccessException e) {
