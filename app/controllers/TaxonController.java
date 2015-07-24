@@ -103,7 +103,16 @@ public class TaxonController extends Controller
 	 */
 	public static Promise<Result> showPhotos(Long id)
 	{
-		
 		return TaxonManager.showPhotos(id);
+	}
+	
+	/**
+	 * Show monographies of a specific taxon
+	 * @param id
+	 * @return the list of monographies
+	 */
+	public static Promise<Result> showMonographies(Long id)
+	{
+		return TaxonManager.showMonographies(id);
 	}
 }

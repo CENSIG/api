@@ -269,4 +269,13 @@
 			</query>
 		</raw-sql>
     </entity>
+    <entity class="models.MonographieModel">
+    	<raw-sql name="show">
+    		<query>
+    			SELECT bloc, contenu
+    			FROM contenu.monographies
+    			WHERE cd_ref = :id
+			</query>
+		</raw-sql>
+    </entity>
 </entity-mappings>

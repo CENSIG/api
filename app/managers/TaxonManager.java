@@ -8,6 +8,7 @@ import models.ChartObsModel;
 import models.ChildsModel;
 import models.GeoJsonModel;
 import models.InformationsModel;
+import models.MonographieModel;
 import models.ParentsModel;
 import models.PhotoModel;
 import models.TaxonObsModel;
@@ -151,6 +152,21 @@ public class TaxonManager extends Manager
 		res = (isValid(res)) ? res : null;
 		
 		return createResponse(res, "Aucune photos trouvés pour la ressource "+id);
+	}
+
+	/**
+	 * Get the response (monographie)
+	 * @param id the cdnom
+	 * @return Json response (json list monographies)
+	 */
+	public static Promise<Result> showMonographies(Long id) {
+		List<MonographieModel> res = Ebean.createNamedQuery(MonographieModel.class, "show")
+				.setParameter("id", Long.toString(id))
+				.findList();
+		
+		res = (isValid(res)) ? res : null;
+		
+		return createResponse(res, "Aucune monographies trouvés pour la ressource "+id);
 	}
 }
 
