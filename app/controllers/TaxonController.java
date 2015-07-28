@@ -64,16 +64,6 @@ public class TaxonController extends Controller
 	}
 	
 	/**
-	 * Show synonimes for a specific taxon
-	 * @param id The cdnom
-	 * @return	the synonimes
-	 */
-	public static Promise<Result> showSynonimes(Long id) 
-	{
-		return TaxonManager.showSynonimes(id);
-	}
-	
-	/**
 	 * Show brothers for a specific taxon
 	 * @param id the cdnom
 	 * @return the brothers
@@ -114,5 +104,15 @@ public class TaxonController extends Controller
 	public static Promise<Result> showMonographies(Long id)
 	{
 		return TaxonManager.showMonographies(id);
+	}
+	
+	/**
+	 * Show phenologie of a specific taxon
+	 * @param id
+	 * @return the phenologie
+	 */
+	public static Promise<Result> showPhenologie(Long id)
+	{
+		return TaxonManager.showPhenologie(id);
 	}
 }

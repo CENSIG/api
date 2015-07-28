@@ -10,6 +10,7 @@ import models.GeoJsonModel;
 import models.InformationsModel;
 import models.MonographieModel;
 import models.ParentsModel;
+import models.PhenologieModel;
 import models.PhotoModel;
 import models.TaxonObsModel;
 import models.TaxonsModel;
@@ -89,22 +90,6 @@ public class TaxonManager extends Manager
 	}
 	
 	/**
-	 * Get the response (synonimes)
-	 * @param id the cdnom
-	 * @return Json response (json array of synonimes)
-	 */
-	public static Promise<Result> showSynonimes(Long id)
-	{
-		List<TaxonObsModel> res = Ebean.createNamedQuery(TaxonObsModel.class, "synonymes")
-				.setParameter("id", Long.toString(id))
-				.findList();
-		
-		res = (isValid(res)) ? res : null;
-		
-		return createResponse(res, "Aucun synonimes trouvés pour la ressource "+id);
-	}
-	
-	/**
 	 * Get the response (brothers)
 	 * @param id the cdnom
 	 * @return Json response (json array of brothers)
@@ -167,6 +152,21 @@ public class TaxonManager extends Manager
 		res = (isValid(res)) ? res : null;
 		
 		return createResponse(res, "Aucune monographies trouvés pour la ressource "+id);
+	}
+
+	/**
+	 * Get the response (phenologie)
+	 * @param id the cdnom
+	 * @return	Json response (json phenologie: mois, total, adultes, larves)
+	 */
+	public static Promise<Result> showPhenologie(Long id) {
+		List<PhenologieModel> res = Ebean.createNamedQuery(PhenologieModel.class, "show")
+				.setParameter("id", Long.toString(id))
+				.findList();
+		
+		res = (isValid(res)) ? res : null;
+		
+		return createResponse(res, "Aucune observations pour la ressource "+id);
 	}
 }
 
