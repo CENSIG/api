@@ -67,6 +67,8 @@ public class TaxonTestAtlas extends WithApplication
 
 	private static final String URI_TAXON_199909_MONOGRAPHIES = API + "/taxon/199909/monographies";
 	
+	private static final String URI_TAXON_185214_PHENOLOGIE = API + "/taxon/185214/phenologie";
+	
 	
 	
 	@Test
@@ -224,5 +226,15 @@ public class TaxonTestAtlas extends WithApplication
 		
 		result = route(fakeRequest(GET, URI_TAXON_199909_MONOGRAPHIES));
 		assertThat(status(result)).isEqualTo(OK);
+	}
+	
+	@Test
+	public void testShowPhenologie()
+	{
+		Result result = route(fakeRequest(GET, URI_TAXON_185214_PHENOLOGIE));
+		assertThat(status(result)).isEqualTo(OK);
+		 
+		assertThat(contentType(result)).isEqualTo("application/json");
+		
 	}
 }
