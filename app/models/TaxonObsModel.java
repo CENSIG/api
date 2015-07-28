@@ -6,8 +6,8 @@ import com.avaje.ebean.annotation.Sql;
 
 /**
  * 
- * Model for synonimes of taxon
- * (specific for sql show synonimes)
+ * Model for first childs childs of taxon
+ * (specific for sql show first_childs_childs)
  * @author jean
  *
  */
