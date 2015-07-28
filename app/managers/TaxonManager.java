@@ -3,8 +3,6 @@ package managers;
 import static utils.JsonParse.parse;
 
 import java.util.List;
-
-import models.ChartObsModel;
 import models.ChildsModel;
 import models.GeoJsonModel;
 import models.InformationsModel;
@@ -14,13 +12,11 @@ import models.PhenologieModel;
 import models.PhotoModel;
 import models.TaxonObsModel;
 import models.TaxonsModel;
-import play.Configuration;
 import play.Play;
 import play.libs.F.Promise;
 import play.mvc.Result;
 
 import com.avaje.ebean.Ebean;
-import com.avaje.ebean.Query;
 
 public class TaxonManager extends Manager 
 {
