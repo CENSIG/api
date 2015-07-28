@@ -278,4 +278,52 @@
 			</query>
 		</raw-sql>
     </entity>
+    <entity class="models.PhenologieModel">
+    	<raw-sql name="show">
+    		<query>
+    			select mois, total, adultes, larves 
+				from (
+					WITH RECURSIVE ancetres as  (
+    				    SELECT cd_taxsup, cd_nom, cd_ref as aïeul, lb_nom
+        				FROM inpn.taxref_v8
+        				where cd_nom = :id
+   						UNION
+        				SELECT syn.cd_taxsup, syn.cd_nom, syn.cd_ref AS aïeul, syn.lb_nom
+        				FROM inpn.taxref_v8 tax join inpn.taxref_v8 syn USING(cd_ref)
+        				where tax.cd_nom = :id
+    					UNION
+        				SELECT tax.cd_taxsup, tax.cd_nom, f.aïeul, f.lb_nom
+        				FROM inpn.taxref_v8 tax
+        				JOIN ancetres f
+        				ON tax.cd_taxsup = f.cd_nom
+
+					), mois as (
+    					select generate_series(1,12,1) AS mois
+					), obs_mensuelles AS (
+    					SELECT COALESCE(extract(MONTH from date_obs), extract(MONTH from date_debut_obs), extract(MONTH from date_fin_obs),
+    					CASE WHEN date_textuelle ~ E'^\\d{2}/\\d{3}' THEN extract(month FROM to_date('01/'||date_textuelle, 'dd/mm/yyyy')) END) AS mois,
+    					count(id_obs) AS nombres_total_d_obs
+    					--, sum(CASE WHEN phenologie ILIKE 'adulte%' THEN 1 ELSE 0 END) As ad_ancienne -- à l'ancienne
+    					, count(id_obs) FILTER (WHERE phenologie ILIKE 'adulte%') AS obs_d_adultes -- pour postgresql 9.4+
+    					, count(id_obs) FILTER (WHERE phenologie IN ('Œuf',  'chrysalide/nymphe', 'larve')) AS obs_de_stades_larvaires
+    					FROM saisie.saisie_observation obs join ign_geofla.commune c ON code_insee = insee_com
+    					JOIN ancetres a ON a.cd_nom = obs.cd_nom
+    					where code_reg = '91'
+    					AND statut_validation NOT IN ('validée','possible')
+    					AND COALESCE(extract(MONTH from date_obs), extract(MONTH from date_debut_obs), extract(MONTH from date_fin_obs),
+    					CASE WHEN date_textuelle ~ E'^\\d{2}/\\d{3}' THEN extract(month FROM to_date('01/'||date_textuelle, 'dd/mm/yyyy')) END
+    					) IS NOT NULL
+    					GROUP BY COALESCE(extract(MONTH from date_obs), extract(MONTH from date_debut_obs), extract(MONTH from date_fin_obs),
+    					CASE WHEN date_textuelle ~ E'^\\d{2}/\\d{3}' THEN extract(month FROM to_date('01/'||date_textuelle, 'dd/mm/yyyy')) END
+    					)
+				)
+				SELECT mois.mois as mois, COALESCE(nombres_total_d_obs, 0) as total
+				, COALESCE(obs_d_adultes, 0) as adultes
+				, COALESCE(obs_de_stades_larvaires, 0) as larves
+				FROM mois LEFT JOIN obs_mensuelles USING(mois)
+				ORDER BY 1
+			) as phenologie
+    		</query>
+    	</raw-sql>
+    </entity>
 </entity-mappings>
