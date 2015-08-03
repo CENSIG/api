@@ -25,13 +25,13 @@ public class TaxonManager extends Manager
 	 * @param  id   The identifiant
 	 * @return Json response
 	 */
-	public static Promise<Result> showGeoJson(Long id)
+	public static GeoJsonModel showGeoJson(Long id)
 	{
-		GeoJsonModel res = Ebean.createNamedQuery(GeoJsonModel.class, "show")
+		return Ebean.createNamedQuery(GeoJsonModel.class, "show")
 				.setParameter("id", Long.toString(id))
 				.findUnique();
 		
-		return createResponse(parse(res), "L'identifiant "+id+" n'existe pas pour cette ressouce");
+		//return createResponse(parse(res), "L'identifiant "+id+" n'existe pas pour cette ressouce");
 	}
 	
 	/**
@@ -39,13 +39,13 @@ public class TaxonManager extends Manager
 	 * @param  id   The identifiant
 	 * @return Json response
 	 */
-	public static Promise<Result> showInformations(Long id)
+	public static InformationsModel showInformations(Long id)
 	{
 		InformationsModel res = Ebean.createNamedQuery(InformationsModel.class, "show")
 				.setParameter("id", Long.toString(id))
 				.findUnique();
-		
-		return createResponse(res, "L'identifiant "+id+" n'existe pas pour cette ressource");
+		return res;
+		//return createResponse(res, "L'identifiant "+id+" n'existe pas pour cette ressource");
 	}
 	
 	/**
@@ -53,7 +53,7 @@ public class TaxonManager extends Manager
 	 * @param 	id The identifiant
 	 * @return	Json response (json array of parents)
 	 */
-	public static Promise<Result> showParents(Long id, String limit)
+	public static List<ParentsModel> showParents(Long id, String limit)
 	{
 		String filter = Play.application().configuration().getConfig("parents").getString(limit);
 		
@@ -61,10 +61,10 @@ public class TaxonManager extends Manager
 				.setParameter("id", Long.toString(id))
 				.setParameter("limit", filter)
 				.findList();
+		return res;
+		//res = (isValid(res)) ? res : null;
 		
-		res = (isValid(res)) ? res : null;
-		
-		return createResponse(res, "L'identifiant "+id+" n'existe pas pour cette ressource");
+		//return createResponse(res, "L'identifiant "+id+" n'existe pas pour cette ressource");
 	}
 	
 	/**
@@ -73,16 +73,16 @@ public class TaxonManager extends Manager
 	 * @param search filter for child name
 	 * @return Json response (json array of childs)
 	 */
-	public static Promise<Result> showChilds(Long id, String search)
+	public static List<ChildsModel> showChilds(Long id, String search)
 	{
 		List<ChildsModel> res = Ebean.createNamedQuery(ChildsModel.class, "show")
 				.setParameter("id", Long.toString(id))
 				.setParameter("q", search+"%")
 				.findList();
+		return res;
+		//res = (isValid(res)) ? res : null;
 		
-		res = (isValid(res)) ? res : null;
-		
-		return createResponse(res, "Aucun taxon trouvé pour la ressource "+id+" et le filtre "+search);
+		//return createResponse(res, "Aucun taxon trouvé pour la ressource "+id+" et le filtre "+search);
 	}
 	
 	/**
@@ -90,15 +90,15 @@ public class TaxonManager extends Manager
 	 * @param id the cdnom
 	 * @return Json response (json array of brothers)
 	 */
-	public static Promise<Result> showBrothers(Long id)
+	public static List<TaxonsModel> showBrothers(Long id)
 	{
 		List<TaxonsModel> res = Ebean.createNamedQuery(TaxonsModel.class, "show")
 				.setParameter("id", Long.toString(id))
 				.findList();
+		return res;
+		//res = (isValid(res)) ? res : null;
 		
-		res = (isValid(res)) ? res : null;
-		
-		return createResponse(res, "Aucun frêres trouvés pour la ressource "+id);
+		//return createResponse(res, "Aucun frêres trouvés pour la ressource "+id);
 	}
 	
 	/**
@@ -108,15 +108,15 @@ public class TaxonManager extends Manager
 	 * @param format (optionnal) output for json
 	 * @return Json response (json array of first childs)
 	 */
-	public static Promise<Result> showFirstChildObs(Long id)
+	public static List<TaxonObsModel> showFirstChildObs(Long id)
 	{
 		List<TaxonObsModel> res = Ebean.createNamedQuery(TaxonObsModel.class, "firstChildObs")
 				.setParameter("id", Long.toString(id))
 				.findList();
+		return res;
+		//res = (isValid(res)) ? res : null;
 		
-		res = (isValid(res)) ? res : null;
-		
-		return createResponse(res, "Aucun fils direct trouvés pour la ressource "+id);
+		//return createResponse(res, "Aucun fils direct trouvés pour la ressource "+id);
 	}
 
 	/**
@@ -124,15 +124,15 @@ public class TaxonManager extends Manager
 	 * @param id the cdnom
 	 * @return Json response (json array photo)
 	 */
-	public static Promise<Result> showPhotos(Long id) {
+	public static List<PhotoModel> showPhotos(Long id) {
 		
 		List<PhotoModel> res = Ebean.createNamedQuery(PhotoModel.class, "show")
 				.setParameter("id", Long.toString(id))
 				.findList();
+		return res;
+		//res = (isValid(res)) ? res : null;
 		
-		res = (isValid(res)) ? res : null;
-		
-		return createResponse(res, "Aucune photos trouvés pour la ressource "+id);
+		//return createResponse(res, "Aucune photos trouvés pour la ressource "+id);
 	}
 
 	/**
@@ -140,14 +140,14 @@ public class TaxonManager extends Manager
 	 * @param id the cdnom
 	 * @return Json response (json list monographies)
 	 */
-	public static Promise<Result> showMonographies(Long id) {
+	public static List<MonographieModel> showMonographies(Long id) {
 		List<MonographieModel> res = Ebean.createNamedQuery(MonographieModel.class, "show")
 				.setParameter("id", Long.toString(id))
 				.findList();
+		return res;
+		//res = (isValid(res)) ? res : null;
 		
-		res = (isValid(res)) ? res : null;
-		
-		return createResponse(res, "Aucune monographies trouvés pour la ressource "+id);
+		//return createResponse(res, "Aucune monographies trouvés pour la ressource "+id);
 	}
 
 	/**
@@ -155,14 +155,15 @@ public class TaxonManager extends Manager
 	 * @param id the cdnom
 	 * @return	Json response (json phenologie: mois, total, adultes, larves)
 	 */
-	public static Promise<Result> showPhenologie(Long id) {
+	public static List<PhenologieModel> showPhenologie(Long id) {
 		List<PhenologieModel> res = Ebean.createNamedQuery(PhenologieModel.class, "show")
 				.setParameter("id", Long.toString(id))
 				.findList();
+		return res;
 		
-		res = (isValid(res)) ? res : null;
+		//res = (isValid(res)) ? res : null;
 		
-		return createResponse(res, "Aucune observations pour la ressource "+id);
+		//return createResponse(res, "Aucune observations pour la ressource "+id);
 	}
 }
 
