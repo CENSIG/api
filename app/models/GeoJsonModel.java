@@ -1,10 +1,6 @@
 package models;
 
 import javax.persistence.Entity;
-import javax.persistence.Id;
-
-import actions.ToJson;
-import actions.StringJson;
 
 import com.avaje.ebean.annotation.Sql;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -25,13 +21,10 @@ import play.data.validation.Constraints;
 @JsonInclude(Include.NON_NULL)
 public class GeoJsonModel extends Model 
 {	
-	@Id
 	public String type;
 	
 	@Constraints.Required
-	@StringJson
 	public String featuresString;
 	
-	@ToJson
 	public JsonNode features;
 }
