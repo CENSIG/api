@@ -4,7 +4,7 @@
     	<raw-sql name="show">
     		 <columnMapping column="features" property="featuresString" />
     		<query>
-    			SELECT type, features FROM (
+    			SELECT features FROM (
 				WITH RECURSIVE ancetres as  (
 
 					SELECT cd_taxsup, cd_nom, cd_ref as aïeul, lb_nom
@@ -44,8 +44,7 @@
 				group by g.geometrie
 			)
 
-			SELECT 'FeatureCollection' as type
-			, array_to_json(array_agg(feature)) as features
+			SELECT array_to_json(array_agg(feature)) as features
 			from feature
 			) as geojson
     		</query>
