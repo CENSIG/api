@@ -199,6 +199,7 @@ public class TaxonController extends Controller
 	public static Promise<Result> showFirstChildObs(final Long id)
 	{
 		//ExecutionContext context = Akka.system().dispatchers().lookup("play.akka.actor.my-context");
+		ExecutionContext context = HttpExecution.fromThread(Akka.system().dispatchers().lookup("play.akka.actor.my-context"));
 		
 		F.Promise<List<TaxonObsModel>> promise = F.Promise.promise(
 				new Function0<List<TaxonObsModel>>() {
@@ -206,7 +207,7 @@ public class TaxonController extends Controller
 						List<TaxonObsModel> info = TaxonManager.showFirstChildObs(id);
 						return info;
 					}
-				}
+				}, context
 		);
 		
 		return promise.map(
@@ -214,7 +215,7 @@ public class TaxonController extends Controller
 				public Result apply(List<TaxonObsModel> info) {
 					return ok(Json.toJson(info));
 				}
-			}
+			}, context
 		);
 		//return TaxonManager.showFirstChildObs(id);
 	}
