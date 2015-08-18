@@ -3,6 +3,7 @@ package controllers;
 import java.util.List;
 
 import actions.CorsAction;
+import actions.PrivateAction;
 import actions.RequiredParamAnnotation;
 import actions.StringParamAnnotation;
 import managers.TaxonManager;
@@ -32,7 +33,7 @@ import static utils.BuildResult.build;
  * @author Jean BOUDET
  *
  */
-@With(CorsAction.class)
+@With({CorsAction.class, PrivateAction.class})
 public class TaxonController extends Controller 
 {
 	private static ExecutionContext bigRequest = HttpExecution.fromThread(Akka.system().dispatchers().lookup("play.akka.actor.bigRequest"));
