@@ -2,8 +2,7 @@ package controllers;
 
 import java.util.List;
 
-import actions.CorsAction;
-import actions.PrivateAction;
+import actions.AuthAction;
 import actions.RequiredParamAnnotation;
 import actions.StringParamAnnotation;
 import managers.TaxonManager;
@@ -33,7 +32,7 @@ import static utils.BuildResult.build;
  * @author Jean BOUDET
  *
  */
-@With({CorsAction.class, PrivateAction.class})
+@With(AuthAction.class)
 public class TaxonController extends Controller 
 {
 	private static ExecutionContext bigRequest = HttpExecution.fromThread(Akka.system().dispatchers().lookup("play.akka.actor.bigRequest"));
@@ -90,7 +89,7 @@ public class TaxonController extends Controller
 	 */
 	@StringParamAnnotation("limit")
 	public static Promise<Result> showParents(final Long id, final String limit)
-	{
+	{	
 		return Promise.promise(
 			new Function0<List<ParentsModel>>() {
 				public List<ParentsModel> apply() {
