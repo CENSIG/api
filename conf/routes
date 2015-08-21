@@ -2,20 +2,29 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-GET 	/apiv1/taxon/:id/geojson				controllers.TaxonController.showGeoJson(id: Long)
+# Route for CORS preFlight
+OPTIONS /*path						controllers.OptionsController.preFlighted(path: String)
 
-GET 	/apiv1/taxon/:id/informations			controllers.TaxonController.showInformations(id: Long)
+# GET request atlas consultation
+GET 	/taxon/:id/geojson			controllers.TaxonController.showGeoJson(id: Long)
 
-GET		/apiv1/taxon/:id/parents				controllers.TaxonController.showParents(id: Long, limit: String ?= "KD")
+GET 	/taxon/:id/informations 	controllers.TaxonController.showInformations(id: Long)
 
-GET		/apiv1/taxon/:id/childs 				controllers.TaxonController.showChilds(id: Long, q: String ?= "0")
+GET		/taxon/:id/parents			controllers.TaxonController.showParents(id: Long, limit: String ?= "KD")
 
-GET		/apiv1/taxon/:id/brothers 				controllers.TaxonController.showBrothers(id: Long)
+GET		/taxon/:id/childs 			controllers.TaxonController.showChilds(id: Long, q: String ?= "0")
 
-GET 	/apiv1/taxon/:id/first_child_obs		controllers.TaxonController.showFirstChildObs(id: Long)
+GET		/taxon/:id/brothers 		controllers.TaxonController.showBrothers(id: Long)
 
-GET 	/apiv1/taxon/:id/photos					controllers.TaxonController.showPhotos(id: Long)
+GET 	/taxon/:id/first_child_obs	controllers.TaxonController.showFirstChildObs(id: Long)
 
-GET 	/apiv1/taxon/:id/monographies			controllers.TaxonController.showMonographies(id: Long)
+GET 	/taxon/:id/photos			controllers.TaxonController.showPhotos(id: Long)
 
-GET 	/apiv1/taxon/:id/phenologie				controllers.TaxonController.showPhenologie(id: Long)
+GET 	/taxon/:id/monographies		controllers.TaxonController.showMonographies(id: Long)
+
+GET 	/taxon/:id/phenologie		controllers.TaxonController.showPhenologie(id: Long)
+
+# POST request authentification
+POST	/login						controllers.AuthController.login()
+
+POST 	/loginWithId				controllers.AuthController.loginWithId()
