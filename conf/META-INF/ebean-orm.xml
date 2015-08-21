@@ -325,4 +325,15 @@
     		</query>
     	</raw-sql>
     </entity>
+    <entity class="models.AuthModel">
+    	<raw-sql name="api-login">
+    		<columnMapping column="key" property="id" />
+    		<columnMapping column="value" property="token" />
+    		<query>
+    			SELECT key, value
+				FROM md.api_params
+				WHERE (key = 'login' and value = :login) or (key = 'password' and value = md5(:password))
+    		</query>
+    	</raw-sql>
+    </entity>
 </entity-mappings>
