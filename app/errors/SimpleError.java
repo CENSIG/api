@@ -9,8 +9,18 @@ public class SimpleError
 		this.error = message;
 	}
 	
+	public SimpleError()
+	{
+		this(null);
+	}
+	
 	public String getError()
 	{
 		return this.error;
+	}
+	
+	public void setError(String message)
+	{
+		this.error = message;
 	}
 }
