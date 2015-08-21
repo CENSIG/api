@@ -3,13 +3,10 @@ package models;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 
-import actions.ToJson;
-import actions.StringJson;
 
 import com.avaje.ebean.annotation.Sql;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.databind.JsonNode;
 
 import play.db.ebean.Model;
 
