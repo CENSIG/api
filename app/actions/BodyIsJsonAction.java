@@ -11,7 +11,7 @@ import play.mvc.Result;
  * For post request. The body must be in json
  * @author Jean BOUDET 
  */
-public class BodyIsJson extends Simple 
+public class BodyIsJsonAction extends Simple 
 {
 	
 	private final static String CONTENT_TYPE = "application/json";

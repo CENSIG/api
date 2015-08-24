@@ -1,7 +1,7 @@
 package actions;
 
+import annotations.StringParam;
 import errors.SimpleError;
-import play.Logger;
 import play.libs.Json;
 import play.libs.F.Promise;
 import play.mvc.Action;
@@ -14,7 +14,7 @@ import play.mvc.Result;
  * @author Jean BOUDET
  *
  */
-public class StringParam extends Action<StringParamAnnotation> 
+public class StringParamAction extends Action<StringParam> 
 {
 	@Override
 	public Promise<Result> call(Context ctx) throws Throwable {

@@ -1,5 +1,6 @@
 package actions;
 
+import annotations.RequiredParam;
 import errors.SimpleError;
 import play.libs.F.Promise;
 import play.libs.Json;
@@ -13,7 +14,7 @@ import play.mvc.Result;
  * @author Jean BOUDET
  *
  */
-public class RequiredParam extends Action<RequiredParamAnnotation> 
+public class RequiredParamAction extends Action<RequiredParam> 
 {
 	@Override
 	public Promise<Result> call(Context ctx) throws Throwable {
