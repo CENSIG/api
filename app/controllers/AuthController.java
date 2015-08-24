@@ -1,6 +1,6 @@
 package controllers;
 
-import actions.BodyIsJson;
+import actions.BodyIsJsonAction;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
@@ -22,7 +22,7 @@ import java.util.UUID;
  *
  */
 @BodyParser.Of(BodyParser.Json.class)
-@With(BodyIsJson.class)
+@With(BodyIsJsonAction.class)
 public class AuthController extends Controller {
 	
 	/**
@@ -43,7 +43,7 @@ public class AuthController extends Controller {
 						if (AuthManager.checkApiLoginPassword(login, password) && token != null) {
 							String clientId = UUID.randomUUID().toString();
 							res = new AuthModel(clientId, token);
-							Cache.set(clientId, token, 60 * 10);
+							Cache.set(clientId, token, 60);
 						}
 						return res;
 					}

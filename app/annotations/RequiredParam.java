@@ -1,4 +1,4 @@
-package actions;
+package annotations;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -7,6 +7,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import actions.RequiredParamAction;
 import play.mvc.With;
 
 /**
@@ -15,12 +16,12 @@ import play.mvc.With;
  * @author Jean BOUDET
  *
  */
-@With(RequiredParam.class)
+@With(RequiredParamAction.class)
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 @Inherited
 @Documented
-public @interface RequiredParamAnnotation 
+public @interface RequiredParam 
 {
 	String value();
 }

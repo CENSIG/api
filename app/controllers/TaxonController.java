@@ -2,9 +2,11 @@ package controllers;
 
 import java.util.List;
 
-import actions.AuthAction;
-import actions.RequiredParamAnnotation;
-import actions.StringParamAnnotation;
+import annotations.Auth;
+import annotations.Caching;
+import annotations.Cors;
+import annotations.RequiredParam;
+import annotations.StringParam;
 import managers.TaxonManager;
 import models.ChildsModel;
 import models.GeoJsonModel;
@@ -22,7 +24,6 @@ import play.libs.F.Promise;
 import play.libs.HttpExecution;
 import play.mvc.Controller;
 import play.mvc.Result;
-import play.mvc.With;
 import scala.concurrent.ExecutionContext;
 import static utils.BuildResult.build;
 
@@ -32,7 +33,6 @@ import static utils.BuildResult.build;
  * @author Jean BOUDET
  *
  */
-@With(AuthAction.class)
 public class TaxonController extends Controller 
 {
 	private static ExecutionContext bigRequest = HttpExecution.fromThread(Akka.system().dispatchers().lookup("play.akka.actor.bigRequest"));
@@ -42,6 +42,9 @@ public class TaxonController extends Controller
 	 * @param id
 	 * @return The GeoJson result
 	 */
+	@Cors
+	@Auth
+	@Caching(time=60*10)
 	public static Promise<Result> showGeoJson(final Long id)
 	{
 		return Promise.promise(
@@ -64,6 +67,9 @@ public class TaxonController extends Controller
 	 * @param id
 	 * @return The informations result
 	 */
+	@Cors
+	@Auth
+	@Caching(time=60*10)
 	public static Promise<Result> showInformations(final Long id)
 	{	
 		return Promise.promise(
@@ -87,7 +93,10 @@ public class TaxonController extends Controller
 	 * @param  limit limit for display hierarchie (default KD)
 	 * @return The parents result
 	 */
-	@StringParamAnnotation("limit")
+	@StringParam("limit")
+	@Cors
+	@Auth
+	@Caching(time=60*20)
 	public static Promise<Result> showParents(final Long id, final String limit)
 	{	
 		return Promise.promise(
@@ -111,8 +120,10 @@ public class TaxonController extends Controller
 	 * @param q filter for child name
 	 * @return the childs
 	 */
-	@RequiredParamAnnotation("q")
-	@StringParamAnnotation("q")
+	@RequiredParam("q")
+	@StringParam("q")
+	@Cors
+	@Auth
 	public static Promise<Result> showChilds(final Long id, final String q)
 	{
 		return Promise.promise(
@@ -135,6 +146,9 @@ public class TaxonController extends Controller
 	 * @param id the cdnom
 	 * @return the brothers
 	 */
+	@Cors
+	@Auth
+	@Caching(time=60*20)
 	public static Promise<Result> showBrothers(final Long id)
 	{	
 		return Promise.promise(
@@ -159,6 +173,9 @@ public class TaxonController extends Controller
 	 * @param format (optionnal) change the json output
 	 * @return The first child
 	 */
+	@Cors
+	@Auth
+	@Caching(time=60*20)
 	public static Promise<Result> showFirstChildObs(final Long id)
 	{	
 		return Promise.promise(
@@ -182,6 +199,9 @@ public class TaxonController extends Controller
 	 * @param id
 	 * @return the list of photos
 	 */
+	@Cors
+	@Auth
+	@Caching(time=60*10)
 	public static Promise<Result> showPhotos(final Long id)
 	{
 		return Promise.promise(
@@ -204,6 +224,9 @@ public class TaxonController extends Controller
 	 * @param id
 	 * @return the list of monographies
 	 */
+	@Cors
+	@Auth
+	@Caching(time=60*10)
 	public static Promise<Result> showMonographies(final Long id)
 	{
 		return Promise.promise(
@@ -226,6 +249,9 @@ public class TaxonController extends Controller
 	 * @param id
 	 * @return the phenologie
 	 */
+	@Cors
+	@Auth
+	@Caching(time=60*10)
 	public static Promise<Result> showPhenologie(final Long id)
 	{	
 		return Promise.promise(
