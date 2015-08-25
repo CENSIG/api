@@ -5,6 +5,7 @@ import actions.BodyIsJsonAction;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import errors.SimpleError;
+import play.Play;
 import play.cache.Cache;
 import play.libs.F.Function;
 import play.libs.F.Function0;
@@ -25,6 +26,8 @@ import java.util.UUID;
 @With(BodyIsJsonAction.class)
 public class AuthController extends Controller {
 	
+	private static final int TOKEN_LIFE_TIME = Play.application().configuration().getInt("application.tokenLifeTime");
+	
 	/**
 	 * Check the login, password and save client id / token if
 	 * is good
@@ -43,7 +46,7 @@ public class AuthController extends Controller {
 						if (AuthManager.checkApiLoginPassword(login, password) && token != null) {
 							String clientId = UUID.randomUUID().toString();
 							res = new AuthModel(clientId, token);
-							Cache.set(clientId, token, 60);
+							Cache.set(clientId, token, TOKEN_LIFE_TIME);
 						}
 						return res;
 					}
