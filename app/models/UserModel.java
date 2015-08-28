@@ -8,6 +8,11 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
 import play.db.ebean.Model;
 
+/**
+ * Model for user
+ * @author Jean BOUDET
+ *
+ */
 @Entity
 @Sql
 @JsonInclude(Include.NON_NULL)
