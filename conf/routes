@@ -24,6 +24,8 @@ GET 	/taxon/:id/monographies		controllers.TaxonController.showMonographies(id: L
 
 GET 	/taxon/:id/phenologie		controllers.TaxonController.showPhenologie(id: Long)
 
+GET		/taxon/:id/observateurs		controllers.TaxonController.showAlphabetObservateurs(id: Long, output ?= null)
+
 # POST request authentification
 POST	/login						controllers.AuthController.login()
 
