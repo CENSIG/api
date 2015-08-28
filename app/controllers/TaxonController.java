@@ -8,6 +8,7 @@ import annotations.Cors;
 import annotations.RequiredParam;
 import annotations.StringParam;
 import managers.TaxonManager;
+import models.AreaModel;
 import models.ChildsModel;
 import models.GeoJsonModel;
 import models.InformationsModel;
@@ -270,6 +271,11 @@ public class TaxonController extends Controller
 		);
 	}
 	
+	/**
+	 * Show observateur or alphabet observateur
+	 * @param id cdnom of taxon
+	 * @return the alphabet or observateur 
+	 */
 	@Cors
 	@RequiredParam("output")
 	@StringParam("output")
@@ -293,6 +299,39 @@ public class TaxonController extends Controller
 			new Function<List<UserModel>, Result>() {
 				public Result apply(List<UserModel> obj) {
 					return build(obj, "Pas d'observateur pour la ressource "+id);
+				}
+			}
+		);
+	}
+	
+	/**
+	 * Show communes or alphabet communes
+	 * @param id cdnom of taxon
+	 * @return the alphabet or communes list
+	 */
+	@Cors
+	@RequiredParam("output")
+	@StringParam("output")
+	@Auth
+	@Caching(time=60*1440)
+	public static Promise<Result> showAlphabetCommunes(final Long id, final String output)
+	{
+		return Promise.promise(
+				new Function0<List<AreaModel>>() {
+					public List<AreaModel> apply() {
+						List<AreaModel> users = null;
+						if (output.equals("alphabet")) {
+							users = TaxonManager.showAlphabetCommunes(id);
+						} else {
+							users = TaxonManager.showCommunes(id, output);
+						}
+						return users;
+					}
+				}
+		).map(
+			new Function<List<AreaModel>, Result>() {
+				public Result apply(List<AreaModel> obj) {
+					return build(obj, "Pas de communes pour la ressource "+id);
 				}
 			}
 		);
