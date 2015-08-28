@@ -15,6 +15,7 @@ import models.MonographieModel;
 import models.ParentsModel;
 import models.PhenologieModel;
 import models.PhotoModel;
+import models.UserModel;
 import models.TaxonObsModel;
 import models.TaxonsModel;
 import play.libs.Akka;
@@ -93,7 +94,6 @@ public class TaxonController extends Controller
 	 * @param  limit limit for display hierarchie (default KD)
 	 * @return The parents result
 	 */
-	@StringParam("limit")
 	@Cors
 	@Auth
 	@Caching(time=60*20)
@@ -266,6 +266,33 @@ public class TaxonController extends Controller
 					return build(phenologie, "Aucune observations pour la ressource "+id);
 				}
 			}, bigRequest
+		);
+	}
+	
+	@Cors
+	@RequiredParam("output")
+	@StringParam("output")
+	@Auth
+	public static Promise<Result> showAlphabetObservateurs(final Long id, final String output)
+	{
+		return Promise.promise(
+				new Function0<List<UserModel>>() {
+					public List<UserModel> apply() {
+						List<UserModel> users = null;
+						if (output.equals("alphabet")) {
+							users = TaxonManager.showAlphabetObservateurs(id);
+						} else {
+							users = TaxonManager.showObservateurs(id, output);
+						}
+						return users;
+					}
+				}
+		).map(
+			new Function<List<UserModel>, Result>() {
+				public Result apply(List<UserModel> obj) {
+					return build(obj, "Pas d'observateur pour la ressource "+id);
+				}
+			}
 		);
 	}
 }
