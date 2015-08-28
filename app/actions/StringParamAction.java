@@ -2,6 +2,7 @@ package actions;
 
 import annotations.StringParam;
 import errors.SimpleError;
+import play.Logger;
 import play.libs.Json;
 import play.libs.F.Promise;
 import play.mvc.Action;
@@ -20,16 +21,14 @@ public class StringParamAction extends Action<StringParam>
 	public Promise<Result> call(Context ctx) throws Throwable {
 		String param  		 = configuration.value();
 		String search 		 = ctx.request().getQueryString(param);
-		Promise<Result> res  = delegate.call(ctx);
-		
-		if (search == null) return res;
-		
-		if (isInteger(search)) {
-			res = Promise.pure((Result) status(
-					422, 
-					Json.toJson(new SimpleError("Le paramêtre "+param+" doit contenir une chaîne de caractère"))
-			));
-		}
+		Promise<Result> res = Promise.pure((Result) status(
+				422, 
+				Json.toJson(new SimpleError("Le paramêtre "+param+" doit contenir une chaîne de caractère"))
+		));
+		Logger.debug("foo"+search.length());
+		if ((search != null && search.length() > 0) && !isInteger(search))
+			res = delegate.call(ctx);
+			
 		
 		return res;
 	}
