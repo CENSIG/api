@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<entity-mappings>
+<entity-mappings version="1.0" xmlns="http://java.sun.com/xml/ns/persistence/orm"
+                 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+                 xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/orm orm_1_0.xsd">
     <entity class="models.GeoJsonModel">
     	<raw-sql name="show">
     		 <columnMapping column="features" property="featuresString" />
@@ -336,4 +338,77 @@
     		</query>
     	</raw-sql>
     </entity>
+    
+    <entity class="models.UserModel">
+    	<raw-sql name="showAlphabet">
+    		<columnMapping column="first" property="firstNameLetter" />
+    		<query>
+    			select first from (
+					WITH RECURSIVE descendants(cd_nom, cd_taxsup, cd_ref) AS (
+						SELECT cd_nom, cd_taxsup, cd_ref
+						FROM inpn.taxref_v8
+						WHERE cd_nom = :id
+
+						UNION ALL
+
+						SELECT e.cd_nom, e.cd_taxsup, e.cd_ref
+						FROM descendants AS ss
+						JOIN inpn.taxref_v8 AS e
+						ON e.cd_taxsup = ss.cd_nom
+						
+						), id as (
+							SELECT DISTINCT(CAST(unnest(string_to_array(observateur, :delimiter)) as integer)) as id_personne
+							FROM descendants ss
+							JOIN inpn.taxref_v8 i
+							ON i.cd_ref = ss.cd_ref
+							JOIN saisie.saisie_observation o
+							ON i.cd_nom = o.cd_nom
+							WHERE i.cd_ref = ss.cd_nom
+						)
+
+						SELECT distinct left(initcap(nom), 1) as first
+						FROM md.personne
+						JOIN id
+						USING(id_personne)
+						ORDER BY 1
+					) as initial
+    		</query>
+   		</raw-sql>
+   		<raw-sql name="showWithOutput">
+   			<columnMapping column="prenom" property="firstName" />
+   			<columnMapping column="nom" property="name" />
+   			<query>
+   			select nom, prenom from (
+				WITH RECURSIVE descendants(cd_nom, cd_taxsup, cd_ref) AS (
+					SELECT cd_nom, cd_taxsup, cd_ref
+					FROM inpn.taxref_v8
+					WHERE cd_nom = :id
+
+					UNION ALL
+
+					SELECT e.cd_nom, e.cd_taxsup, e.cd_ref
+					FROM descendants AS ss
+					JOIN inpn.taxref_v8 AS e
+					ON e.cd_taxsup = ss.cd_nom
+	
+				), id as (
+					SELECT DISTINCT(CAST(unnest(string_to_array(observateur, :delimiter)) as integer)) as id_personne
+					FROM descendants ss
+					JOIN inpn.taxref_v8 i
+					ON i.cd_ref = ss.cd_ref
+					JOIN saisie.saisie_observation o
+					ON i.cd_nom = o.cd_nom
+					WHERE i.cd_ref = ss.cd_nom
+				)
+
+				SELECT distinct nom, prenom
+				FROM md.personne
+				JOIN id
+				USING(id_personne)
+				where nom like :output
+				ORDER BY 1
+			) as initial
+   			</query>
+   		</raw-sql>
+   	</entity>
 </entity-mappings>
