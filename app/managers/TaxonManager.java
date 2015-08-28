@@ -3,6 +3,7 @@ package managers;
 
 import java.util.List;
 
+import models.AreaModel;
 import models.ChildsModel;
 import models.GeoJsonModel;
 import models.InformationsModel;
@@ -152,6 +153,11 @@ public class TaxonManager extends Manager
 		return isValid(res) ? res : null;
 	}
 	
+	/**
+	 * Get the alphabet for observateurs of a specific taxon
+	 * @param id cdnom
+	 * @return list or null
+	 */
 	public static List<UserModel> showAlphabetObservateurs(Long id) {
 		List<UserModel> res = Ebean.createNamedQuery(UserModel.class, "showAlphabet")
 				.setParameter("id", Long.toString(id))
@@ -160,10 +166,42 @@ public class TaxonManager extends Manager
 		return isValid(res) ? res : null;
 	}
 	
+	/**
+	 * Get the name and firstname for all observateurs of a specific taxon
+	 * @param id cdnom
+	 * @param output first letter
+	 * @return list or null
+	 */
 	public static List<UserModel> showObservateurs(Long id, String output) {
 		List<UserModel> res = Ebean.createNamedQuery(UserModel.class, "showWithOutput")
 				.setParameter("id", Long.toString(id))
 				.setParameter("delimiter", "&")
+				.setParameter("output", output+"%")
+				.findList();
+		return isValid(res) ? res : null;
+	}
+
+	/**
+	 * Get the alphabet for communes of a specific taxon
+	 * @param id cdnom
+	 * @return list or null
+	 */
+	public static List<AreaModel> showAlphabetCommunes(Long id) {
+		List<AreaModel> res = Ebean.createNamedQuery(AreaModel.class, "showAlphabet")
+				.setParameter("id", Long.toString(id))
+				.findList();
+		return isValid(res) ? res : null;
+	}
+
+	/**
+	 * Get the name for all communes of a specific taxon
+	 * @param id cdnom
+	 * @param output first letter
+	 * @return list or null
+	 */
+	public static List<AreaModel> showCommunes(Long id, String output) {
+		List<AreaModel> res = Ebean.createNamedQuery(AreaModel.class, "showWithOutput")
+				.setParameter("id", Long.toString(id))
 				.setParameter("output", output+"%")
 				.findList();
 		return isValid(res) ? res : null;
