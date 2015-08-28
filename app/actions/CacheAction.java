@@ -1,5 +1,8 @@
 package actions;
 
+import java.util.Iterator;
+import java.util.Map;
+
 import annotations.Caching;
 import play.libs.F.Callback;
 import play.libs.F.Promise;
@@ -28,8 +31,27 @@ public class CacheAction extends Action<Caching> {
 		cacheId.append(".");
 		cacheId.append(id);
 		cacheId.append(".");
-		cacheId.append(objet);
 		
+		// Pour les paramètres dans l'url
+		Iterator<Map.Entry<String, String[]>> iterator = ctx.request().queryString().entrySet().iterator();
+		
+		if (iterator.hasNext()) {
+			String[] objetWithParam = objet.split("\\?");
+			cacheId.append(objetWithParam[0]);
+			
+			/*
+			 * On rajoute seulement les valeurs des paramètres. Par exemple
+			 * pour la recherche d'un taxon qui est: /taxon/185214/childs?q=macu
+			 * la clef enregistrée dans le cache est : taxon.185214.childs.macu
+			 */
+			while (iterator.hasNext()) {
+				Map.Entry<String, String[]> entry = (Map.Entry<String, String[]>) iterator.next();
+				cacheId.append(".");
+				cacheId.append(entry.getValue()[0]);
+			}
+		} else {
+			cacheId.append(objet);
+		}
 		
 		Promise<Result> res;
 		final String cacheIdString = cacheId.toString();
