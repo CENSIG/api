@@ -124,6 +124,7 @@ public class TaxonController extends Controller
 	@StringParam("q")
 	@Cors
 	@Auth
+	@Caching(time=60*1440)
 	public static Promise<Result> showChilds(final Long id, final String q)
 	{
 		return Promise.promise(
@@ -273,6 +274,7 @@ public class TaxonController extends Controller
 	@RequiredParam("output")
 	@StringParam("output")
 	@Auth
+	@Caching(time=60*1440)
 	public static Promise<Result> showAlphabetObservateurs(final Long id, final String output)
 	{
 		return Promise.promise(
