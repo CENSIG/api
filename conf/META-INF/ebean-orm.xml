@@ -411,4 +411,75 @@
    			</query>
    		</raw-sql>
    	</entity>
+   	<entity class="models.AreaModel">
+    	<raw-sql name="showAlphabet">
+    		<columnMapping column="first" property="firstNameLetter" />
+    		<query>
+    		SELECT first from (
+				WITH RECURSIVE descendants(cd_nom, cd_taxsup, cd_ref) AS (
+					SELECT cd_nom, cd_taxsup, cd_ref
+					FROM inpn.taxref_v8
+					WHERE cd_nom = :id
+
+					UNION ALL
+
+					SELECT e.cd_nom, e.cd_taxsup, e.cd_ref
+					FROM descendants AS ss
+					JOIN inpn.taxref_v8 AS e
+					ON e.cd_taxsup = ss.cd_nom
+						
+					), id as (
+						SELECT DISTINCT code_insee
+						FROM descendants ss
+						JOIN inpn.taxref_v8 i
+						ON i.cd_ref = ss.cd_ref
+						JOIN saisie.saisie_observation o
+						ON i.cd_nom = o.cd_nom
+						WHERE i.cd_ref = ss.cd_nom
+					)
+
+					SELECT distinct left(initcap(nom), 1) as first
+					FROM ign_bd_topo.commune t
+					JOIN id i
+					using (code_insee)
+					order by 1
+			) as alphabet
+    		</query>
+    	</raw-sql>
+    	<raw-sql name="showWithOutput">
+    		<columnMapping column="nom" property="name" />
+    		<query>
+    			SELECT nom from (
+					WITH RECURSIVE descendants(cd_nom, cd_taxsup, cd_ref) AS (
+						SELECT cd_nom, cd_taxsup, cd_ref
+						FROM inpn.taxref_v8
+						WHERE cd_nom = :id
+
+						UNION ALL
+
+						SELECT e.cd_nom, e.cd_taxsup, e.cd_ref
+						FROM descendants AS ss
+						JOIN inpn.taxref_v8 AS e
+						ON e.cd_taxsup = ss.cd_nom
+	
+					), id as (
+						SELECT DISTINCT code_insee
+						FROM descendants ss
+						JOIN inpn.taxref_v8 i
+						ON i.cd_ref = ss.cd_ref
+						JOIN saisie.saisie_observation o
+						ON i.cd_nom = o.cd_nom
+						WHERE i.cd_ref = ss.cd_nom
+					)
+
+					SELECT distinct nom
+					FROM ign_bd_topo.commune t
+					JOIN id i
+					using (code_insee)
+					where nom like :output
+					order by 1
+				) as alphabet
+    		</query>
+    	</raw-sql>
+    </entity>
 </entity-mappings>
