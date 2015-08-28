@@ -2,6 +2,7 @@ package managers;
 
 
 import java.util.List;
+
 import models.ChildsModel;
 import models.GeoJsonModel;
 import models.InformationsModel;
@@ -9,6 +10,7 @@ import models.MonographieModel;
 import models.ParentsModel;
 import models.PhenologieModel;
 import models.PhotoModel;
+import models.UserModel;
 import models.TaxonObsModel;
 import models.TaxonsModel;
 import play.Play;
@@ -113,7 +115,7 @@ public class TaxonManager extends Manager
 		return isValid(res) ? res : null;
 	}
 
-	/**
+	/**	
 	 * Get the response (photo)
 	 * @param id the cdnom
 	 * @return data or null
@@ -146,6 +148,23 @@ public class TaxonManager extends Manager
 	public static List<PhenologieModel> showPhenologie(Long id) {
 		List<PhenologieModel> res = Ebean.createNamedQuery(PhenologieModel.class, "show")
 				.setParameter("id", Long.toString(id))
+				.findList();
+		return isValid(res) ? res : null;
+	}
+	
+	public static List<UserModel> showAlphabetObservateurs(Long id) {
+		List<UserModel> res = Ebean.createNamedQuery(UserModel.class, "showAlphabet")
+				.setParameter("id", Long.toString(id))
+				.setParameter("delimiter", "&")
+				.findList();
+		return isValid(res) ? res : null;
+	}
+	
+	public static List<UserModel> showObservateurs(Long id, String output) {
+		List<UserModel> res = Ebean.createNamedQuery(UserModel.class, "showWithOutput")
+				.setParameter("id", Long.toString(id))
+				.setParameter("delimiter", "&")
+				.setParameter("output", output+"%")
 				.findList();
 		return isValid(res) ? res : null;
 	}
