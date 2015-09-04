@@ -58,7 +58,7 @@ public class TaxonController extends Controller
 		).map(
 			new Function<GeoJsonModel, Result>() {
 				public Result apply(GeoJsonModel geojson) {
-					return build(geojson, "Aucune observations pour la ressource "+id);
+					return build(geojson, "Aucune observation pour la ressource "+id);
 				}
 			}, bigRequest
 		);
